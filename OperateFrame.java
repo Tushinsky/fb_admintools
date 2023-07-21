@@ -7,13 +7,18 @@ package frame;
 import admintools.CSVOperate;
 import admintools.JDBCConnection;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -31,6 +36,7 @@ public class OperateFrame extends javax.swing.JFrame {
     private int idOperation;// идентификатор операций (импорт, экспорт, обновление)
     private DBOperation dbOperate;
     private ConnectOptions connOptions;
+    private final String defaultTitle = "Admin Tools for database operations: ";
 //    private JDBCConnection connect;
 //    private String nameTable;// ��� ��������� �������
     
@@ -63,6 +69,8 @@ public class OperateFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         btnOpenFile = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lstTableName = new javax.swing.JList();
@@ -182,7 +190,6 @@ public class OperateFrame extends javax.swing.JFrame {
         jToolBar1.setRollover(true);
 
         btnOpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/OpenFile.png"))); // NOI18N
-        btnOpenFile.setText("открыть");
         btnOpenFile.setToolTipText("открыть файл");
         btnOpenFile.setFocusable(false);
         btnOpenFile.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -194,6 +201,18 @@ public class OperateFrame extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(btnOpenFile);
+
+        jButton1.setText("jButton1");
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton1);
+
+        jButton2.setText("jButton2");
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton2);
 
         jLabel2.setText("jLabel2");
 
@@ -277,6 +296,11 @@ public class OperateFrame extends javax.swing.JFrame {
         mnuConnectParameters.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         mnuConnectParameters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/info.png"))); // NOI18N
         mnuConnectParameters.setText("Окно ввода параметров");
+        mnuConnectParameters.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuConnectParametersActionPerformed(evt);
+            }
+        });
         mnuFileConnection.add(mnuConnectParameters);
 
         mnuFile.add(mnuFileConnection);
@@ -299,6 +323,7 @@ public class OperateFrame extends javax.swing.JFrame {
         jMenuBar1.add(mnuFile);
 
         mnuData.setText("Данные");
+        mnuData.setEnabled(false);
 
         mnuDataImport.setText("Импорт");
         mnuDataImport.addActionListener(new java.awt.event.ActionListener() {
@@ -394,9 +419,14 @@ public class OperateFrame extends javax.swing.JFrame {
         OperateProgressBar.setValue(0);
         
         // задаём заголовок фрейма
-        setFrameTitle();
+        setTitle(defaultTitle);
         
-        setIdOperation();// задаём тип выполняемой опереции
+        // задаём значок для формы
+        URL url;
+        url = OperateFrame.class.getClassLoader().getResource("image/base.png");
+        setIconImage(new ImageIcon(url).getImage());
+        
+//        setIdOperation();// задаём тип выполняемой опереции
         this.setLocationRelativeTo(null);// располагаем форму по середине экрана
         try {
             dbOperate = new DBOperation();
@@ -407,7 +437,8 @@ public class OperateFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formComponentShown
 
     private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
-        // ������� ���������� � �������� ���� ����������
+        // закрываем соединение с базой перед выходом
+        closeConnection();
         System.exit(0);
     }//GEN-LAST:event_formComponentHidden
 
@@ -511,7 +542,8 @@ public class OperateFrame extends javax.swing.JFrame {
 
     private void mnuFileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuFileExitActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
+        closeConnection();// закрываем соединение с базой
+        System.exit(0);// завершение работы
     }//GEN-LAST:event_mnuFileExitActionPerformed
 
     private void mnuDataImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataImportActionPerformed
@@ -524,12 +556,14 @@ public class OperateFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         idOperation = 1;
         setFrameTitle();
+        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataExportActionPerformed
 
     private void mnuDataUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataUpdateActionPerformed
         // TODO add your handling code here:
         idOperation = 2;
         setFrameTitle();
+        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataUpdateActionPerformed
 
     /**
@@ -539,11 +573,30 @@ public class OperateFrame extends javax.swing.JFrame {
     private void mnuConnectPropertiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuConnectPropertiesActionPerformed
         // отображаем диалоговое окно выбора файла
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств .properties", "properties"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, .properties", "properties"));
         chooser.showDialog(this, "Open file");
-        if(chooser.accept(chooser.getSelectedFile()))
-            System.out.println(chooser.getName(chooser.getSelectedFile()));
+        File f = chooser.getSelectedFile();// выбранный пользователем файл
+        if(chooser.accept(f)){
+            // если пользователь выбрал файл, то печатаем его имя
+            System.out.println(chooser.getName(f));
+            try {
+                mnuData.setEnabled(openConnection(f));
+            } catch (IOException | SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+            
     }//GEN-LAST:event_mnuConnectPropertiesActionPerformed
+
+    private void mnuConnectParametersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuConnectParametersActionPerformed
+        // отображаем на экране окно ввода параметров подключения
+        try {
+            mnuData.setEnabled(openConnection(null));
+        } catch (IOException | SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_mnuConnectParametersActionPerformed
 
     /**
      * @param args the command line arguments
@@ -598,6 +651,8 @@ public class OperateFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnSendTo;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox chkHeader;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -657,13 +712,13 @@ public class OperateFrame extends javax.swing.JFrame {
         String title;
         switch (idOperation) {
             case 0:
-                title = "Импорт данных";
+                title = defaultTitle + "Импорт данных";
                 break;
             case 1:
-                title = "Экспорт данных";
+                title = defaultTitle + "Экспорт данных";
                 break;
             default:
-                title = "Обновление данных";
+                title = defaultTitle + "Обновление данных";
                 break;
         }
         setTitle(title);
@@ -1344,6 +1399,7 @@ public class OperateFrame extends javax.swing.JFrame {
         private String Password;
         private String aliasName;
         private boolean accessOpen;// флаг открытия доступа к базе данных
+        private File fileName;
         
         public ConnectOptions() {
             accessOpen = false;// доступ пока закрыт
@@ -1438,13 +1494,29 @@ public class OperateFrame extends javax.swing.JFrame {
          */
         public void showLoginframe(){
             LoginFrame logframe = new LoginFrame();// создаём экземпляр формы
+            // если задан файл свойств, то считываем его и задаём параметры соединения для формы доступа
+            if(fileName != null) {
+                try {
+                    readConnectProperties();
+                } catch (IOException ex) {
+                    Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                logframe.setDatabaseName(databaseName);
+                logframe.setHostIP(hostIP);
+                logframe.setServerPort(serverPort);
+                logframe.setUserName(username);
+            }
             logframe.showDialog(OperateFrame.this);// показываем его
-            hostIP = logframe.getHostIP();
-            serverPort = logframe.getServerPort();
-            databaseName = logframe.getDatabaseName();
-            username = logframe.getUserName();
-            Password = logframe.getPassword();
-            aliasName = logframe.getAliasName();
+            if(logframe.isOk()) {
+                hostIP = logframe.getHostIP();
+                serverPort = logframe.getServerPort();
+                databaseName = logframe.getDatabaseName();
+                username = logframe.getUserName();
+                Password = logframe.getPassword();
+                aliasName = logframe.getAliasName();
+            } else {
+                databaseName = "";
+            }
         }
 
         /**
@@ -1460,9 +1532,51 @@ public class OperateFrame extends javax.swing.JFrame {
         public void setAliasName(String aliasName) {
             this.aliasName = aliasName;
         }
+
+        /**
+         * @return the fileName
+         */
+        public File getFileName() {
+            return fileName;
+        }
+
+        /**
+         * @param fileName the fileName to set
+         */
+        public void setFileName(File fileName) {
+            this.fileName = fileName;
+        }
+        
+        private void readConnectProperties() throws IOException {
+            Properties props = new Properties();// создаём класс для чтения из файла свойств
+            try {
+                // создаём поток чтения данных из файла
+                FileInputStream fin = new FileInputStream(fileName);
+                props.load(fin);// считываем свойства
+
+                // получаем все перечисенные свойства
+                Enumeration e = props.propertyNames();
+                while(e.hasMoreElements()) {
+                    String propName = e.nextElement().toString();// получаем имя свойства
+                    System.out.println(propName.toLowerCase() + "=" + props.getProperty(propName));
+                    // проверяем, что содержится в имени свойства
+                    if(propName.toLowerCase().contains("database")) {
+                        databaseName = props.getProperty(propName);
+                    } else if(propName.toLowerCase().contains("hostip")) {
+                        hostIP = props.getProperty(propName);
+                    } else if(propName.toLowerCase().contains("serverport")) {
+                        serverPort = props.getProperty(propName);
+                    } else if(propName.toLowerCase().contains("user")) {
+                        username = props.getProperty(propName);
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
-    private boolean openConnection() throws FileNotFoundException, 
+    private boolean openConnection(File file) throws FileNotFoundException, 
             IOException, SQLException, ClassNotFoundException {
         // открываем соединение с базой данных
         //читаем файл свойств для загрузки драйвера и других параметров
@@ -1470,19 +1584,17 @@ public class OperateFrame extends javax.swing.JFrame {
         String message = "Connection is not opened!";
         boolean retval;
         // создаём класс для получения доступа к базе данных
-        connOptions = new ConnectOptions();
-        if(connOptions.isAccessOpen() == false){
-            connOptions.showLoginframe();
-        }
-        if(connOptions.getAliasName() != null){
+        if(connOptions == null) connOptions = new ConnectOptions();
+        connOptions.setFileName(file);
+        connOptions.showLoginframe();
+        if(!connOptions.getDatabaseName().equals("")) {
             try {
                 // set drivername
-                String driver = "org.firebirdsql.jdbc.FBDriver";//props.getProperty("jdbc.driver");
-    //                System.out.println("driver = " + driver);
+                String driver = "org.firebirdsql.jdbc.FBDriver";
                 String url = "jdbc:firebirdsql://" + connOptions.getHostIP() + ":" +
                     connOptions.getServerPort() + "/" + 
-                    connOptions.getDatabaseName();//props.getProperty("jdbc.url");
-//                    System.out.println("url = " + url);
+                    connOptions.getDatabaseName();
+
                 // открываем первоначальное соединение с базой данных
                 connection = new JDBCConnection(driver, url, connOptions.getUsername(),
                         connOptions.getPassword());
@@ -1493,7 +1605,7 @@ public class OperateFrame extends javax.swing.JFrame {
                     retval = false;
     //                System.exit(0);
                 }
-                connOptions.setAccessOpen(retval);
+                System.out.println("retval=" + retval);
                 // окно сообщения по результатам соединения
                 getInformDialog(this, message, InformDialog.InformType.CONNECT);
                 return retval;
@@ -1502,12 +1614,7 @@ public class OperateFrame extends javax.swing.JFrame {
                 getInformDialog(this, message, InformDialog.InformType.CONNECT);
                 return false;
             }
-        } else {
-            // окно сообщения по результатам соединения
-            getInformDialog(this, message, InformDialog.InformType.CONNECT);
-            return false;
-        }
-
+        } else {return false;}
             
     }
     
@@ -1535,5 +1642,42 @@ public class OperateFrame extends javax.swing.JFrame {
         idialog.setMessage(message);
         idialog.setType(type);
         idialog.setVisible(true);
+    }
+    
+    /**
+     * Читает свойства соединения из выбранного файла свойств
+     * @param filename имя файла свойств для чтения
+     */
+    private void readConnectProperies(java.io.File filename) throws IOException {
+        Properties props = new Properties();// создаём класс для чтения из файла свойств
+        try {
+            LoginFrame logFrame = new LoginFrame();// окно ввода параметров соединения
+            
+            // создаём поток чтения данных из файла
+            FileInputStream fin = new FileInputStream(filename);
+            props.load(fin);// считываем свойства
+            
+            // получаем все перечисенные свойства
+            Enumeration e = props.propertyNames();
+            while(e.hasMoreElements()) {
+                String propName = e.nextElement().toString();// получаем имя свойства
+                System.out.println(propName.toLowerCase() + "=" + props.getProperty(propName));
+                // проверяем, что содержится в имени свойства
+                if(propName.toLowerCase().contains("database")) {
+                    logFrame.setDatabaseName(props.getProperty(propName));
+                } else if(propName.toLowerCase().contains("hostip")) {
+                    logFrame.setHostIP(props.getProperty(propName));
+                } else if(propName.toLowerCase().contains("serverport")) {
+                    logFrame.setServerPort(props.getProperty(propName));
+                } else if(propName.toLowerCase().contains("user")) {
+                    logFrame.setUserName(props.getProperty(propName));
+                }
+            }
+            
+            // выводим на экран окно для ввода пароля
+            logFrame.showDialog(this);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
