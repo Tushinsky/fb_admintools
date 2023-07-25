@@ -8,6 +8,7 @@ package admintools;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 /**
@@ -95,16 +96,20 @@ public class DBOperation implements MoveOnStepImpl {
     private JTextArea txtStep;// поле ввода с описание шагов операции
     private JLabel lblTableName;// метка для списка с именами таблиц
     private JLabel lblTargetLabel;// метка для целевого списка
-
+    private JTable tableData;// таблица с данными
+    private DefaultListModel model;// модель для заполнения списка
+    private String[] column;// массив полей выбранной таблицы
+    
     public DBOperation(JDBCConnection connection, JList lstTableName, 
             JList lstTargetList, JTextArea txtStep, JLabel lblTableName, 
-            JLabel lblTargetLabel) {
+            JLabel lblTargetLabel, JTable tableData) {
         this.connection = connection;
         this.lstTableName = lstTableName;
         this.lstTargetList = lstTargetList;
         this.txtStep = txtStep;
         this.lblTableName = lblTableName;
         this.lblTargetLabel = lblTargetLabel;
+        this.tableData = tableData;
     }
 
     public DBOperation() {
@@ -146,7 +151,7 @@ public class DBOperation implements MoveOnStepImpl {
      * @param nameArray
      * @return 
      */
-    public DefaultListModel model (Object[] nameArray) {
+    private DefaultListModel model (Object[] nameArray) {
         DefaultListModel retModel = new DefaultListModel();
         retModel.clear();
         // если передан массив и он содержит данные
@@ -161,21 +166,21 @@ public class DBOperation implements MoveOnStepImpl {
     /**
     * устанавливает модель для списка
      * @param list
-     * @param model
+     * @param nameArray
     */
-    public void setListModel(JList list, DefaultListModel model){
-            list.setModel(model);
+    public void setListModel(JList list, Object[] nameArray){
+            list.setModel(model(nameArray));
     }
 
     
     private Object[] getDBTableName() {
-        table_Name = connection.getListTable();
+        table_Name = getConnection().getListTable();
         return table_Name;
         
     }
     
     private Object[] getDBTableColumnName() {
-        column_Name = connection.getListColumnTable(getTable());
+        column_Name = getConnection().getListColumnTable(getTable());
         return column_Name;
     }
 
@@ -191,5 +196,47 @@ public class DBOperation implements MoveOnStepImpl {
      */
     public void setTable(String table) {
         this.table = table;
+    }
+
+    /**
+     * @return the tableData
+     */
+    public JTable getTableData() {
+        return tableData;
+    }
+
+    /**
+     * @param tableData the tableData to set
+     */
+    public void setTableData(JTable tableData) {
+        this.tableData = tableData;
+    }
+
+    /**
+     * @return the connection
+     */
+    public JDBCConnection getConnection() {
+        return connection;
+    }
+    
+    /**
+     * Добавление элемента в список
+     */
+    public void addListItem() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * @return the column
+     */
+    public String[] getColumn() {
+        return column;
+    }
+
+    /**
+     * @param column the column to set
+     */
+    public void setColumn(String[] column) {
+        this.column = column;
     }
 }
