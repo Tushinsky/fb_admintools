@@ -5,6 +5,7 @@
 package frame;
 
 import admintools.CSVOperate;
+import admintools.DBImportAction;
 import admintools.JDBCConnection;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +38,7 @@ public class OperateFrame extends javax.swing.JFrame {
     private DBOperation dbOperate;
     private ConnectOptions connOptions;
     private final String defaultTitle = "Admin Tools for database operations: ";
-//    private JDBCConnection connect;
-//    private String nameTable;// ��� ��������� �������
+    private admintools.DBOperation Operations;
     
     /**
      * Creates new form OperateFrame
@@ -460,7 +460,7 @@ public class OperateFrame extends javax.swing.JFrame {
         // переносим его в правый список
         if(lstTableName.getSelectedIndices().length > 0){
             dbOperate.addListItem();
-            
+            Operations.addListItem();
             // разрешаем доступ к выполнению следующего шага
             btnNext.setEnabled(true);
         }
@@ -497,14 +497,14 @@ public class OperateFrame extends javax.swing.JFrame {
         // если пользователь выбрал файл, то отображаем его название в заголовке
         if(result == JFileChooser.APPROVE_OPTION){
             // устанавливаем заголовок окна в ихсодное состояние
-            setFrameTitle();
+//            setFrameTitle();
             
             String name;
             try {
                 name = chooser.getSelectedFile().getCanonicalPath();
                 System.out.println("file - " + name);
                 
-                setTitle(getTitle() + " : " + name);
+//                setTitle(getTitle() + " : " + name);
                 // окно дополнительных параметров файла
                 OptionDialog.setSize(305, 147);
                 OptionDialog.setLocationRelativeTo(this);
@@ -528,6 +528,7 @@ public class OperateFrame extends javax.swing.JFrame {
                 DefaultTableModel model = new DefaultTableModel(csvReader.getData(), 
                         csvReader.getColumnName());
                 jTable1.setModel(model);
+                Operations.addListItem();// 
             } catch (IOException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -549,6 +550,8 @@ public class OperateFrame extends javax.swing.JFrame {
     private void mnuDataImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataImportActionPerformed
         // TODO add your handling code here:
         idOperation = 0;
+        Operations = new DBImportAction(lstTableName, lstTargetList, txtStep, 
+                jLabel1, jLabel2, jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
         setFrameTitle();
     }//GEN-LAST:event_mnuDataImportActionPerformed
 

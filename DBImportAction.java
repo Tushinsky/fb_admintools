@@ -8,6 +8,7 @@ package admintools;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -26,9 +27,12 @@ public class DBImportAction extends DBOperation {
     
     public DBImportAction(JList lstTableName, JList lstTargetList, 
             JTextArea txtStep, JLabel lblTableName, JLabel lblTargetLabel, JTable tableData,
-            JDBCConnection connection) {
+            JDBCConnection connection, JButton btnSendTo, 
+            JButton btnMoveNext, JButton btnMovePrevoiuse, 
+            JButton btnOkButton) {
         super(connection, lstTableName, lstTargetList, txtStep, lblTableName, 
-                lblTargetLabel, tableData);
+                lblTargetLabel, tableData, btnSendTo, btnMoveNext, 
+                btnMovePrevoiuse, btnOkButton);
     }
 
     @Override
@@ -57,13 +61,8 @@ public class DBImportAction extends DBOperation {
     }
 
     @Override
-    public void setTable(String table) {
-        super.setTable(table); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void addListItem() {
-        super.addListItem(); //To change body of generated methods, choose Tools | Templates.
+        addListItemImport(); //To change body of generated methods, choose Tools | Templates.
     }
     
     private void importData() {
@@ -246,4 +245,5 @@ public class DBImportAction extends DBOperation {
         }
 
     }
+    
 }
