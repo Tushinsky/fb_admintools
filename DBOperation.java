@@ -6,6 +6,7 @@
 package admintools;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -99,10 +100,16 @@ public class DBOperation implements MoveOnStepImpl {
     private JTable tableData;// таблица с данными
     private DefaultListModel model;// модель для заполнения списка
     private String[] column;// массив полей выбранной таблицы
+    private JButton btnSendTo;
+    private JButton btnMoveNext;
+    private JButton btnMovePreviouse;
+    private JButton btnOkButton;
     
     public DBOperation(JDBCConnection connection, JList lstTableName, 
             JList lstTargetList, JTextArea txtStep, JLabel lblTableName, 
-            JLabel lblTargetLabel, JTable tableData) {
+            JLabel lblTargetLabel, JTable tableData, JButton btnSendTo, 
+            JButton btnMoveNext, JButton btnMovePrevoiuse, 
+            JButton btnOkButton) {
         this.connection = connection;
         this.lstTableName = lstTableName;
         this.lstTargetList = lstTargetList;
@@ -110,6 +117,10 @@ public class DBOperation implements MoveOnStepImpl {
         this.lblTableName = lblTableName;
         this.lblTargetLabel = lblTargetLabel;
         this.tableData = tableData;
+        this.btnSendTo = btnSendTo;
+        this.btnMoveNext = btnMoveNext;
+        this.btnMovePreviouse = btnMovePrevoiuse;
+        this.btnOkButton = btnOkButton;
     }
 
     public DBOperation() {
@@ -180,7 +191,7 @@ public class DBOperation implements MoveOnStepImpl {
     }
     
     private Object[] getDBTableColumnName() {
-        column_Name = getConnection().getListColumnTable(getTable());
+        column_Name = getConnection().getListColumnTable(table);
         return column_Name;
     }
 
