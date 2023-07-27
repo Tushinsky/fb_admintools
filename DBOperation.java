@@ -19,6 +19,62 @@ import javax.swing.JTextArea;
 public class DBOperation implements MoveOnStepImpl {
 
     /**
+     * @return the btnSendTo
+     */
+    public JButton getBtnSendTo() {
+        return btnSendTo;
+    }
+
+    /**
+     * @param btnSendTo the btnSendTo to set
+     */
+    public void setBtnSendTo(JButton btnSendTo) {
+        this.btnSendTo = btnSendTo;
+    }
+
+    /**
+     * @return the btnMoveNext
+     */
+    public JButton getBtnMoveNext() {
+        return btnMoveNext;
+    }
+
+    /**
+     * @param btnMoveNext the btnMoveNext to set
+     */
+    public void setBtnMoveNext(JButton btnMoveNext) {
+        this.btnMoveNext = btnMoveNext;
+    }
+
+    /**
+     * @return the btnMovePreviouse
+     */
+    public JButton getBtnMovePreviouse() {
+        return btnMovePreviouse;
+    }
+
+    /**
+     * @param btnMovePreviouse the btnMovePreviouse to set
+     */
+    public void setBtnMovePreviouse(JButton btnMovePreviouse) {
+        this.btnMovePreviouse = btnMovePreviouse;
+    }
+
+    /**
+     * @return the btnOkButton
+     */
+    public JButton getBtnOkButton() {
+        return btnOkButton;
+    }
+
+    /**
+     * @param btnOkButton the btnOkButton to set
+     */
+    public void setBtnOkButton(JButton btnOkButton) {
+        this.btnOkButton = btnOkButton;
+    }
+
+    /**
      * @return the lstTableName
      */
     public JList getLstTableName() {
