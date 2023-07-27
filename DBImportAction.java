@@ -5,6 +5,8 @@
  */
 package admintools;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
@@ -33,6 +35,11 @@ public class DBImportAction extends DBOperation {
         super(connection, lstTableName, lstTargetList, txtStep, lblTableName, 
                 lblTargetLabel, tableData, btnSendTo, btnMoveNext, 
                 btnMovePrevoiuse, btnOkButton);
+        // добавляем слушатели элементам интерфейса
+        super.getBtnMoveNext().addActionListener(MoveNextListener());
+        super.getBtnMovePreviouse().addActionListener(MovePreviouseListener());
+        super.getBtnSendTo().addActionListener(ButtonSendListener());
+        super.getBtnOkButton().addActionListener(ButtonOkListener());
     }
 
     @Override
@@ -246,4 +253,53 @@ public class DBImportAction extends DBOperation {
 
     }
     
+    /**
+     * Создаёт слушатель для действия MoveNext
+     * @return созданный слушатель
+     */
+    private ActionListener MoveNextListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            moveNext();
+        };
+        return listener;
+    }
+    
+    /**
+     * Создаёт слушатель для действия MovePreviouse
+     * @return созданный слушатель
+     */
+    private ActionListener MovePreviouseListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            movePreviouse();
+        };
+        return listener;
+    }
+    
+    /**
+     * Создаёт слушатель для заполнения списков
+     * @return созданный слушатель
+     */
+    private ActionListener ButtonSendListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        };
+        return listener;
+    }
+    
+    /**
+     * Создаёт слушатель для подтверждения действия импорта
+     * @return созданный слушатель
+     */
+    private ActionListener ButtonOkListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        };
+        return listener;
+    }
 }
