@@ -177,6 +177,7 @@ public class DBOperation implements MoveOnStepImpl {
         this.btnMoveNext = btnMoveNext;
         this.btnMovePreviouse = btnMovePrevoiuse;
         this.btnOkButton = btnOkButton;
+        this.btnOkButton.setEnabled(false);
     }
 
     public DBOperation() {

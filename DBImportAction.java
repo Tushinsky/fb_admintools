@@ -24,7 +24,7 @@ import javax.swing.ListSelectionModel;
 public class DBImportAction extends DBOperation {
 
     private final int importStep = 4;// количество шагов для операции импорта
-    private int step = 0;// номер шага для выбранной операции с базой данных
+    private int step = -1;// номер шага для выбранной операции с базой данных
     private DefaultListModel model;// модель для заполнения списка
     
     public DBImportAction(JList lstTableName, JList lstTargetList, 
@@ -116,7 +116,7 @@ public class DBImportAction extends DBOperation {
                 // извещение о том, что можно делать импорт
                 super.getTxtStep().setText("Шаг 4: нажмите Импорт для импорта данных");
                 // доступ к кнопке для выполнения импорта
-                
+                super.getBtnOkButton().setEnabled(true);
                 break;
             case 4:
                 /**
@@ -124,9 +124,11 @@ public class DBImportAction extends DBOperation {
                  * подсчёт количества ошибок импорта, извещение о количестве импорта и ошибок
                 **/
                 super.getTxtStep().setText("Выполняется импорт данных. Ожидайте...");
-                int counter = importDataToDB();
+                int counter = importDataToDB();// выполняем импорт данных в выбранную таблицу
                 String text = super.getTxtStep().getText() + "\n\r";
                 super.getTxtStep().setText(text + "Выполнен импорт данных в количестве " + counter);
+                // доступ к кнопке для выполнения импорта
+                super.getBtnOkButton().setEnabled(false);
                 break;
         }
     }
@@ -205,7 +207,7 @@ public class DBImportAction extends DBOperation {
     
     private void addListItemImport(){
         model = new DefaultListModel();
-        switch(importStep){
+        switch(step){
             case 0:// выбор таблицы
 
                 // добавляем в модель
@@ -286,7 +288,12 @@ public class DBImportAction extends DBOperation {
     private ActionListener ButtonSendListener() {
         ActionListener listener;
         listener = (ActionEvent e) -> {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            //To change body of generated methods, choose Tools | Templates.
+            if(super.getLstTableName().getSelectedIndices().length > 0){
+            addListItemImport();
+            // разрешаем доступ к выполнению следующего шага
+            super.getBtnMoveNext().setEnabled(true);
+        }
         };
         return listener;
     }
@@ -298,7 +305,8 @@ public class DBImportAction extends DBOperation {
     private ActionListener ButtonOkListener() {
         ActionListener listener;
         listener = (ActionEvent e) -> {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            //To change body of generated methods, choose Tools | Templates.
+            moveNext();
         };
         return listener;
     }
