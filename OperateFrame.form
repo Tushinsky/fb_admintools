@@ -458,9 +458,6 @@
           <Image iconType="3" name="/image/NavForward.png"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNextActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="OKButton">
       <Properties>
