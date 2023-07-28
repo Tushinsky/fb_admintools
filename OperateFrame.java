@@ -245,11 +245,6 @@ public class OperateFrame extends javax.swing.JFrame {
         });
 
         btnNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/NavForward.png"))); // NOI18N
-        btnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNextActionPerformed(evt);
-            }
-        });
 
         OKButton.setText("Отмена");
         OKButton.addActionListener(new java.awt.event.ActionListener() {
@@ -442,13 +437,6 @@ public class OperateFrame extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_formComponentHidden
 
-    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        // следующий шаг операции
-        dbOperate.moveNext();
-        // запрещаем доступ к выполнению следующего шага
-        btnNext.setEnabled(false);
-    }//GEN-LAST:event_btnNextActionPerformed
-
     private void btnPreviouseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreviouseActionPerformed
         // предыдущий шаг операции
         dbOperate.movePreviouse();
@@ -528,7 +516,8 @@ public class OperateFrame extends javax.swing.JFrame {
                 DefaultTableModel model = new DefaultTableModel(csvReader.getData(), 
                         csvReader.getColumnName());
                 jTable1.setModel(model);
-                Operations.addListItem();// 
+                btnNext.doClick();
+//                Operations.addListItem();// 
             } catch (IOException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -550,7 +539,7 @@ public class OperateFrame extends javax.swing.JFrame {
     private void mnuDataImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataImportActionPerformed
         // TODO add your handling code here:
         idOperation = 0;
-        Operations = new DBImportAction(lstTableName, lstTargetList, txtStep, 
+        DBImportAction importAction = new DBImportAction(lstTableName, lstTargetList, txtStep, 
                 jLabel1, jLabel2, jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
         setFrameTitle();
     }//GEN-LAST:event_mnuDataImportActionPerformed
@@ -559,14 +548,14 @@ public class OperateFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         idOperation = 1;
         setFrameTitle();
-        dbOperate.moveNext();
+//        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataExportActionPerformed
 
     private void mnuDataUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataUpdateActionPerformed
         // TODO add your handling code here:
         idOperation = 2;
         setFrameTitle();
-        dbOperate.moveNext();
+//        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataUpdateActionPerformed
 
     /**
@@ -828,7 +817,7 @@ public class OperateFrame extends javax.swing.JFrame {
         * операция импорта данных
         */
         private void importData(){
-            OKButton.setEnabled(false);
+//            OKButton.setEnabled(false);
     //        OperateProgressBar.setVisible(false);
             OperateProgressBar.setValue(0);
             switch(step){
