@@ -448,9 +448,6 @@
           <Image iconType="3" name="/image/NavBack.png"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPreviouseActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnNext">
       <Properties>
@@ -463,9 +460,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x41e;&#x442;&#x43c;&#x435;&#x43d;&#x430;"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OKButtonActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnSendTo">
       <Properties>
@@ -473,9 +467,6 @@
           <Image iconType="3" name="/image/NavForward.png"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSendToActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane4">
       <Properties>
