@@ -238,27 +238,12 @@ public class OperateFrame extends javax.swing.JFrame {
         jScrollPane3.setViewportView(jTable1);
 
         btnPreviouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/NavBack.png"))); // NOI18N
-        btnPreviouse.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPreviouseActionPerformed(evt);
-            }
-        });
 
         btnNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/NavForward.png"))); // NOI18N
 
         OKButton.setText("Отмена");
-        OKButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OKButtonActionPerformed(evt);
-            }
-        });
 
         btnSendTo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/NavForward.png"))); // NOI18N
-        btnSendTo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSendToActionPerformed(evt);
-            }
-        });
 
         jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -436,28 +421,6 @@ public class OperateFrame extends javax.swing.JFrame {
         closeConnection();
         System.exit(0);
     }//GEN-LAST:event_formComponentHidden
-
-    private void btnPreviouseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreviouseActionPerformed
-        // предыдущий шаг операции
-        dbOperate.movePreviouse();
-        btnNext.setEnabled(false);
-    }//GEN-LAST:event_btnPreviouseActionPerformed
-
-    private void btnSendToActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendToActionPerformed
-        // если есть выделенный элемент в левом списке
-        // переносим его в правый список
-        if(lstTableName.getSelectedIndices().length > 0){
-            dbOperate.addListItem();
-            Operations.addListItem();
-            // разрешаем доступ к выполнению следующего шага
-            btnNext.setEnabled(true);
-        }
-    }//GEN-LAST:event_btnSendToActionPerformed
-
-    private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
-        // выполняем следующий шаг в операции с базой
-        dbOperate.moveNext();
-    }//GEN-LAST:event_OKButtonActionPerformed
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
         // отображаем окно выбора файла

@@ -16,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 
 /**
  *
@@ -38,8 +39,13 @@ public class DBImportAction extends DBOperation {
         // добавляем слушатели элементам интерфейса
         super.getBtnMoveNext().addActionListener(MoveNextListener());
         super.getBtnMovePreviouse().addActionListener(MovePreviouseListener());
-        super.getBtnSendTo().addActionListener(ButtonSendListener());
+        super.getBtnSendTo().addActionListener(ButtonSendToListener());
         super.getBtnOkButton().addActionListener(ButtonOkListener());
+        super.getLstTableName().addListSelectionListener((ListSelectionEvent lse) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            // разблокируем кнопку перемещения элементов списка
+            super.getBtnSendTo().setEnabled(true);
+        });
     }
 
     @Override
@@ -49,6 +55,9 @@ public class DBImportAction extends DBOperation {
         step++;
         if(step <= importStep){
             importData();
+            // блокируем кнопки перемещения элементов списка и следующего шага
+            super.getBtnSendTo().setEnabled(false);
+            super.getBtnMoveNext().setEnabled(false);
         } else{
             step--;
             }
@@ -60,7 +69,9 @@ public class DBImportAction extends DBOperation {
         // уменьшаем шаг
         step--;
         if(step >= 0){
-
+            // блокируем кнопки перемещения элементов списка и следующего шага
+            super.getBtnSendTo().setEnabled(false);
+            super.getBtnMoveNext().setEnabled(false);
             importData();
         } else{
             step = 0;
@@ -93,7 +104,7 @@ public class DBImportAction extends DBOperation {
                         " данные");
                 super.getLblTableName().setText("список полей");
                 super.getLblTargetLabel().setText("выбранные поля");
-
+                super.setListModel(super.getLstTargetList(), new Object[]{});// очищаем список
                 break;
             case 2:
                 // сопоставление полей для импорта
@@ -285,7 +296,7 @@ public class DBImportAction extends DBOperation {
      * Создаёт слушатель для заполнения списков
      * @return созданный слушатель
      */
-    private ActionListener ButtonSendListener() {
+    private ActionListener ButtonSendToListener() {
         ActionListener listener;
         listener = (ActionEvent e) -> {
             //To change body of generated methods, choose Tools | Templates.
@@ -310,4 +321,6 @@ public class DBImportAction extends DBOperation {
         };
         return listener;
     }
+    
+    
 }
