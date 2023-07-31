@@ -13,10 +13,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -41,11 +43,8 @@ public class DBImportAction extends DBOperation {
         super.getBtnMovePreviouse().addActionListener(MovePreviouseListener());
         super.getBtnSendTo().addActionListener(ButtonSendToListener());
         super.getBtnOkButton().addActionListener(ButtonOkListener());
-        super.getLstTableName().addListSelectionListener((ListSelectionEvent lse) -> {
-            //To change body of generated methods, choose Tools | Templates.
-            // разблокируем кнопку перемещения элементов списка
-            super.getBtnSendTo().setEnabled(true);
-        });
+        super.getLstTableName().addListSelectionListener(ListNameListener());
+        super.getLstTargetList().addListSelectionListener(ListTargetListener());
     }
 
     @Override
@@ -301,9 +300,15 @@ public class DBImportAction extends DBOperation {
         listener = (ActionEvent e) -> {
             //To change body of generated methods, choose Tools | Templates.
             if(super.getLstTableName().getSelectedIndices().length > 0){
-            addListItemImport();
-            // разрешаем доступ к выполнению следующего шага
-            super.getBtnMoveNext().setEnabled(true);
+            try{
+                addListItemImport();
+                // разрешаем доступ к выполнению следующего шага
+                super.getBtnMoveNext().setEnabled(true);
+            } catch(Exception ex) {
+                // сообщение об ошибке
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "OperateFrame", JOptionPane.ERROR_MESSAGE);
+            }
+            
         }
         };
         return listener;
@@ -322,5 +327,46 @@ public class DBImportAction extends DBOperation {
         return listener;
     }
     
+    /**
+     * создаёт слушатель для списка наименований таблиц и полей выбранной таблицы
+     * @return созданный слушатель
+     */
+    private ListSelectionListener ListNameListener() {
+        ListSelectionListener listener = (ListSelectionEvent e) -> {
+            
+            /*
+            после выбора элемента списка разблокируем кнопку перемещения 
+            */
+            switch(step) {
+                case 0:
+                case 1:
+                    // выбор таблицы
+                    // выбор полей таблицы
+                    super.getBtnSendTo().setEnabled(true);
+                    break;
+                case 2:
+                    // сопоставление выбранных полей импортируемым полям
+                    super.getBtnSendTo().setEnabled(false);
+                    break;
+            }
+            
+        };
+        return listener;
+    }
     
+    /**
+     * Создаёт слушатель для списка, в который переносятся выбранные таблицы и поля
+     * @return созданный слушатель
+     */
+    private ListSelectionListener ListTargetListener() {
+        ListSelectionListener listener = (ListSelectionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            /*
+            доступ к кнопке перемещения элементов списка разблокируем только
+            на шаге сопоставления выбранных полей импортируемым полям
+            */
+            if(step == 2) super.getBtnSendTo().setEnabled(true);
+        };
+        return listener;
+    }
 }
