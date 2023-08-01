@@ -156,10 +156,10 @@ public class DBOperation implements MoveOnStepImpl {
     private JTable tableData;// таблица с данными
     private DefaultListModel model;// модель для заполнения списка
     private String[] column;// массив полей выбранной таблицы
-    private JButton btnSendTo;
-    private JButton btnMoveNext;
-    private JButton btnMovePreviouse;
-    private JButton btnOkButton;
+    private JButton btnSendTo;// кнопка перемещения выбранных элементов списка в др список
+    private JButton btnMoveNext;// кнопка выполнения следующего действия
+    private JButton btnMovePreviouse;// кнопка выполнения предыдущего действия
+    private JButton btnOkButton;// кнопка выполнения операций
     
     public DBOperation(JDBCConnection connection, JList lstTableName, 
             JList lstTargetList, JTextArea txtStep, JLabel lblTableName, 
@@ -177,7 +177,11 @@ public class DBOperation implements MoveOnStepImpl {
         this.btnMoveNext = btnMoveNext;
         this.btnMovePreviouse = btnMovePrevoiuse;
         this.btnOkButton = btnOkButton;
+        // блокируем доступ к кнопкам
         this.btnOkButton.setEnabled(false);
+        this.btnSendTo.setEnabled(false);
+//        this.btnMoveNext.setEnabled(false);
+        this.btnMovePreviouse.setEnabled(false);
     }
 
     public DBOperation() {
@@ -306,5 +310,66 @@ public class DBOperation implements MoveOnStepImpl {
      */
     public void setColumn(String[] column) {
         this.column = column;
+    }
+
+    @Override
+    public void Start() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * Заносит имя выбранной таблицы в список назначения
+     */
+    public void sendSelectTableName() {
+        model = new DefaultListModel();
+        // добавляем в модель
+        model.addElement(lstTableName.getSelectedValue());
+        table = lstTableName.getSelectedValue().toString();
+
+        // устанавливаем модель для списка
+        lstTargetList.setModel(model);
+
+    }
+    
+    /**
+     * Заносит наименования выбранных полей в список назначения
+     */
+    public void sendSelectColumnName() {
+        model = new DefaultListModel();
+        int[] index = lstTableName.getSelectedIndices();
+        column = new String[index.length];
+        // массив выделенных элементов
+        for(int i = 0; i < index.length; i++){
+            lstTableName.setSelectedIndex(index[i]);
+            model.addElement(lstTableName.getSelectedValue());
+            column[i] = lstTableName.getSelectedValue().toString();
+        }
+
+        // устанавливаем модель для списка
+        lstTargetList.setModel(model);
+
+    }
+    
+    /**
+     * Сопоставление выбранных полей выбранной таблицы со столбцами таблицы данных
+     */
+    public void compareSelectColumnName() {
+        // индекс выделенного элемента
+        int j = lstTargetList.getSelectedIndex();
+
+        Object value = lstTargetList.getSelectedValue() +
+                "-" + lstTableName.getSelectedValue();
+
+        model = new DefaultListModel();// переопределяем модель
+        for(int i = 0; i < lstTargetList.getModel().getSize(); i++){
+            lstTargetList.setSelectedIndex(i);
+            model.addElement(lstTargetList.getSelectedValue());
+        }
+
+        model.setElementAt(value, j);// новое значение
+
+        // устанавливаем модель для списка
+        lstTargetList.setModel(model);
+
     }
 }

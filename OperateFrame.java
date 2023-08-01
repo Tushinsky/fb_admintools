@@ -479,7 +479,8 @@ public class OperateFrame extends javax.swing.JFrame {
                 DefaultTableModel model = new DefaultTableModel(csvReader.getData(), 
                         csvReader.getColumnName());
                 jTable1.setModel(model);
-                btnNext.doClick();
+//                btnNext.doClick();
+//                btnNext.setEnabled(false);
 //                Operations.addListItem();// 
             } catch (IOException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -505,6 +506,7 @@ public class OperateFrame extends javax.swing.JFrame {
         DBImportAction importAction = new DBImportAction(lstTableName, lstTargetList, txtStep, 
                 jLabel1, jLabel2, jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
         setFrameTitle();
+        importAction.Start();// начало операции по импорту данных
     }//GEN-LAST:event_mnuDataImportActionPerformed
 
     private void mnuDataExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataExportActionPerformed

@@ -13,4 +13,5 @@ public interface MoveOnStepImpl {
     
     void moveNext();
     void movePreviouse();
+    void Start();
 }

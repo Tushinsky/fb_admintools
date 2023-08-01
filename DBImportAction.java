@@ -74,8 +74,17 @@ public class DBImportAction extends DBOperation {
             importData();
         } else{
             step = 0;
+            super.getBtnMovePreviouse().setEnabled(false);
         }
     }
+
+    @Override
+    public void Start() {
+        // начальный этап операции по импорту данных
+        moveNext();
+    }
+    
+    
 
     @Override
     public void addListItem() {
@@ -220,46 +229,14 @@ public class DBImportAction extends DBOperation {
         switch(step){
             case 0:// выбор таблицы
 
-                // добавляем в модель
-                model.addElement(super.getLstTableName().getSelectedValue());
-                super.setTable(super.getLstTableName().getSelectedValue().toString());
-
-                // устанавливаем модель для списка
-                super.getLstTargetList().setModel(model);
+                super.sendSelectTableName();
                 break;
             case 1:// выбор полей
-                model = new DefaultListModel();
-                int[] index = super.getLstTableName().getSelectedIndices();
-                super.setColumn(new String[index.length]);
-                // массив выделенных элементов
-                for(int i = 0; i < index.length; i++){
-                    super.getLstTableName().setSelectedIndex(index[i]);
-                    model.addElement(super.getLstTableName().getSelectedValue());
-                    super.getColumn()[i] = super.getLstTableName().getSelectedValue().toString();
-                }
-
-                // устанавливаем модель для списка
-                super.getLstTargetList().setModel(model);
+                super.sendSelectColumnName();
 
                 break;
             case 2:// сопоставление полей
-                // индекс выделенного элемента
-                int j = super.getLstTargetList().getSelectedIndex();
-
-                Object value = super.getLstTargetList().getSelectedValue() +
-                        "-" +super.getLstTableName().getSelectedValue();
-
-                model = new DefaultListModel();// переопределяем модель
-                for(int i = 0; 
-                        i < super.getLstTargetList().getModel().getSize(); i++){
-                    super.getLstTargetList().setSelectedIndex(i);
-                    model.addElement(super.getLstTargetList().getSelectedValue());
-                }
-
-                model.setElementAt(value, j);// новое значение
-
-                // устанавливаем модель для списка
-                super.getLstTargetList().setModel(model);
+                super.compareSelectColumnName();
                 break;
         }
 
@@ -274,6 +251,8 @@ public class DBImportAction extends DBOperation {
         listener = (ActionEvent e) -> {
             //To change body of generated methods, choose Tools | Templates.
             moveNext();
+            // на начальном этапе кнопка Previouse блокируется, на всех остальных она доступна
+            if(step > 0) super.getBtnMovePreviouse().setEnabled(true);
         };
         return listener;
     }

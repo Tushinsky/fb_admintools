@@ -83,9 +83,41 @@ public class DBUpdateAction extends DBOperation{
     public void addListItem() {
         addListItemUpdate(); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void Start() {
+        //To change body of generated methods, choose Tools | Templates.
+        moveNext();
+    }
+    
+    
     
     private void addListItemUpdate() {
-        
+        model = new DefaultListModel();
+        switch(step){
+            case 0:// выбор таблицы
+
+                super.sendSelectTableName();
+                break;
+            case 1:// выбор полей
+                super.sendSelectColumnName();
+
+                break;
+            case 2:// выбор ключевого поля
+                // добавляем в модель
+                model.addElement(super.getLstTableName().getSelectedValue());
+
+                // первая часть - ключевое поле для обновления в таблице
+                // вторая часть - сопоставленное ему поле в массиве данных,
+                // значение которого будет использоваться для идентификации ключевого поля
+                keyColumn = super.getLstTableName().getSelectedValue().toString() +
+                        "-" + super.getLstTargetList().getSelectedValue().toString();
+                System.out.println("keyColumn -" + keyColumn);
+                break;
+            case 3:// сопоставление полей
+                super.compareSelectColumnName();
+                break;
+        }
     }
     
     /**
