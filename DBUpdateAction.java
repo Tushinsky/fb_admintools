@@ -115,7 +115,7 @@ public class DBUpdateAction extends DBOperation{
                 System.out.println("keyColumn -" + keyColumn);
                 break;
             case 3:// сопоставление полей
-                super.compareSelectColumnName();
+                super.compareSendSelectColumnName();
                 break;
         }
     }
@@ -126,23 +126,18 @@ public class DBUpdateAction extends DBOperation{
     private void updateData(){
         switch(step){
             case 0:
-                // получение списка таблиц базы данных, выбор таблицы для обновления
-                // получаем список таблиц
-                Object[] tableName = super.getTable_Name();
-                // модель списка
-                super.setListModel(super.getLstTableName(), tableName);// заполнение списка данными
-                // извещение пользователя о дальнейших действиях
-                super.getTxtStep().setText("Шаг 1: выберите таблицу для обновления данных");
-                super.getLblTableName().setText("список таблиц");
-                super.getLblTargetLabel().setText("выбранная таблица");
+                /*
+                получение перечня таблиц базы данных, заполнение списка,
+                выбор таблицы для обновления
+                */
+                super.fullTableNameList("Шаг 1: выберите таблицу для обновления данных");
                 break;
             case 1:
-                // получение перечня полей выбранной таблицы, выбор полей для обновления
-                Object[] columnName = super.getColumn_Name();// получаем список полей
-                super.setListModel(super.getLstTableName(), columnName);// заполнение списка данными
-                super.getTxtStep().setText("Шаг 2: выберите поля для обновления данных");
-                super.getLblTableName().setText("список полей");
-                super.getLblTargetLabel().setText("выбранные поля");
+                /*
+                получение перечня полей выбранной таблицы, заполнение списка,
+                выбор полей для обновления
+                */
+                super.fullColumnNameList("Шаг 2: выберите поля для обновления данных");
                 break;
             case 2:
                 // выбор ключевого поля, по которому будут обновляться данные
@@ -158,18 +153,9 @@ public class DBUpdateAction extends DBOperation{
                 break;
             case 3:
                 // сопоставление полей данных и полей для обновления
-                nameItem = new String[super.getTableData().getColumnCount()];
-                for(int i = 0; i < nameItem.length; i++)
-                    nameItem[i] = super.getTableData().getColumnName(i);
-                setListModel(super.getLstTableName(), nameItem);
-                setListModel(super.getLstTargetList(), super.getColumn());
-                // запрещаем множественное выделение
-                super.getLstTableName().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                super.getTxtStep().setText("Шаг 4: выберите поля, из которых будут " +
+                super.fullCompareColumnnameList("Шаг 4: выберите поля, из которых будут " +
                         "обновляться данные, и соответствующие " +
                         "им поля для обновления");
-                super.getLblTableName().setText("список полей");
-                super.getLblTargetLabel().setText("выбранные поля");
                 break;
             case 4:
                 // извещаем пользователя о следующем шаге

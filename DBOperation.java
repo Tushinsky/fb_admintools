@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -205,14 +206,14 @@ public class DBOperation implements MoveOnStepImpl {
     }
     
     /**
-     * @return the table_Name
+     * @return the table_Name - наименование таблиц базы данных
      */
     public Object[] getTable_Name() {
         return getDBTableName();
     }
 
     /**
-     * @return the column_Name
+     * @return the column_Name - наименование полей выбранной таблицы базы данных
      */
     public Object[] getColumn_Name() {
         return getDBTableColumnName();
@@ -220,8 +221,8 @@ public class DBOperation implements MoveOnStepImpl {
     
     /**
      * 
-     * @param nameArray
-     * @return 
+     * @param nameArray - массив значений для заполнения модели списка
+     * @return модель списка, заданную по умолчанию
      */
     private DefaultListModel model (Object[] nameArray) {
         DefaultListModel retModel = new DefaultListModel();
@@ -353,7 +354,7 @@ public class DBOperation implements MoveOnStepImpl {
     /**
      * Сопоставление выбранных полей выбранной таблицы со столбцами таблицы данных
      */
-    public void compareSelectColumnName() {
+    public void compareSendSelectColumnName() {
         // индекс выделенного элемента
         int j = lstTargetList.getSelectedIndex();
 
@@ -370,6 +371,57 @@ public class DBOperation implements MoveOnStepImpl {
 
         // устанавливаем модель для списка
         lstTargetList.setModel(model);
+
+    }
+    
+    /**
+     * Заполняет список именами таблиц базы данных
+     * @param txtStepText текст для отображения в поле ввода
+     */
+    public void fullTableNameList(String txtStepText) {
+        // получаем список таблиц
+        Object[] tableName = getDBTableName();
+        // модель списка
+        setListModel(lstTableName, tableName);// заполнение списка данными
+        // извещение пользователя о дальнейших действиях
+        txtStep.setText(txtStepText);
+        lblTableName.setText("список таблиц");
+        lblTargetLabel.setText("выбранная таблица");
+
+    }
+    
+    /**
+     * Заполняет список именами полей выбранной таблицы базы данных
+     * @param txtStepText текст для отображения в поле ввода
+     */
+    public void fullColumnNameList(String txtStepText) {
+        Object[] columnName = getDBTableColumnName();// получаем список полей
+        setListModel(lstTableName, columnName);// заполнение списка данными
+        txtStep.setText(txtStepText);
+        lblTableName.setText("список полей");
+        lblTargetLabel.setText("выбранные поля");
+        setListModel(lstTargetList, new Object[]{});// очищаем список
+
+    }
+    
+    /**
+     * Заполняет списки именами выбранных полей таблицы базы данных и именами столбцов
+     * таблицы, содержащей данные
+     * @param txtStepText 
+     */
+    public void fullCompareColumnnameList(String txtStepText) {
+        String[] nameItem;// имена выбранных полей
+        // заполняем список полями данных
+        nameItem = new String[tableData.getColumnCount()];
+        for(int i = 0; i < nameItem.length; i++)
+            nameItem[i] = tableData.getColumnName(i);
+        setListModel(lstTableName, nameItem);
+        setListModel(lstTargetList, column);
+        // запрещаем множественное выделение
+        lstTableName.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        txtStep.setText(txtStepText);
+        lblTableName.setText("список полей");
+        lblTargetLabel.setText("выбранные поля");
 
     }
 }
