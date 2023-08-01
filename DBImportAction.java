@@ -94,42 +94,24 @@ public class DBImportAction extends DBOperation {
     private void importData() {
         switch(step) {
             case 0:
-                // получение списка таблиц базы данных, выбор таблицы для импорта
-                // получаем список таблиц
-                Object[] tableName = super.getTable_Name();
-                // модель списка
-                super.setListModel(super.getLstTableName(), tableName);// заполнение списка данными
-                // извещение пользователя о дальнейших действиях
-                super.getTxtStep().setText("Шаг 1: выберите таблицу для импорта данных");
-                super.getLblTableName().setText("список таблиц");
-                super.getLblTargetLabel().setText("выбранная таблица");
+                /*
+                получение перечня таблиц базы данных, заполнение списка,
+                выбор таблицы для импорта
+                */
+                super.fullTableNameList("Шаг 1: выберите таблицу для импорта данных");
                 break;
             case 1:
-                // получение перечня полей выбранной таблицы, выбор полей для импорта
-                Object[] columnName = super.getColumn_Name();// получаем список полей
-                super.setListModel(super.getLstTableName(), columnName);// заполнение списка данными
-                super.getTxtStep().setText("Шаг 2: выберите поля, в которые будут импортироваться" +
+                /*
+                получение перечня полей выбранной таблицы, заполнение списка,
+                выбор полей для импорта
+                */
+                super.fullColumnNameList("Шаг 2: выберите поля, в которые будут импортироваться" +
                         " данные");
-                super.getLblTableName().setText("список полей");
-                super.getLblTargetLabel().setText("выбранные поля");
-                super.setListModel(super.getLstTargetList(), new Object[]{});// очищаем список
                 break;
             case 2:
                 // сопоставление полей для импорта
-                String[] nameItem;// имена выбранных полей
-                // заполняем список полями данных
-                nameItem = new String[super.getTableData().getColumnCount()];
-                for(int i = 0; i < nameItem.length; i++)
-                    nameItem[i] = super.getTableData().getColumnName(i);
-                super.setListModel(super.getLstTableName(), nameItem);
-                super.setListModel(super.getLstTargetList(), super.getColumn());
-                // запрещаем множественное выделение
-                super.getLstTableName().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                super.getTxtStep().setText("Шаг 3: выберите поля, из которых будут импортироваться" +
+                super.fullCompareColumnnameList("Шаг 3: выберите поля, из которых будут импортироваться" +
                         " данные, и соответствующие им поля из правого списка");
-                super.getLblTableName().setText("список полей");
-                super.getLblTargetLabel().setText("выбранные поля");
-
                 break;
             case 3:
                 // извещение о том, что можно делать импорт
@@ -236,7 +218,7 @@ public class DBImportAction extends DBOperation {
 
                 break;
             case 2:// сопоставление полей
-                super.compareSelectColumnName();
+                super.compareSendSelectColumnName();
                 break;
         }
 
