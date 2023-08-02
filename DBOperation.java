@@ -5,6 +5,10 @@
  */
 package admintools;
 
+import frame.DBTableModel;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -12,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -407,7 +412,7 @@ public class DBOperation implements MoveOnStepImpl {
     /**
      * Заполняет списки именами выбранных полей таблицы базы данных и именами столбцов
      * таблицы, содержащей данные
-     * @param txtStepText 
+     * @param txtStepText текст для отображения в поле ввода
      */
     public void fullCompareColumnnameList(String txtStepText) {
         String[] nameItem;// имена выбранных полей
@@ -423,5 +428,31 @@ public class DBOperation implements MoveOnStepImpl {
         lblTableName.setText("список полей");
         lblTargetLabel.setText("выбранные поля");
 
+    }
+    
+    public void getDBTableContent() {
+        // получаем перечень полей выбранной таблицы
+        String fieldList = "";
+        int row = lstTargetList.getModel().getSize();// количество элементов
+        for(int i = 0; i < row; i++)
+            fieldList = fieldList + 
+                    lstTargetList.getModel().getElementAt(i).toString() + ",";
+        // удаляем последний символ
+        String fields = fieldList.substring(0, fieldList.length() - 1);
+        // строка-запрос на выборку данных
+        String sqlQuery = "SELECT " + fields + " FROM " + table + ";";
+        try {
+            
+            DBTableModel tModel = 
+                    new DBTableModel(connection.ExecuteQuery(sqlQuery));
+            DefaultTableModel dtModel = 
+                    new DefaultTableModel(tModel.getContent(), 
+                    tModel.getColumnName());
+            // модель данных для таблицы
+            tableData.setModel(dtModel);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBOperation.class.getName()).log(Level.SEVERE,
+                    null, ex);
+        }
     }
 }
