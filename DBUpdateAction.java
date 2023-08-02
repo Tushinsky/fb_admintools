@@ -9,13 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 
 /**
@@ -26,7 +24,7 @@ public class DBUpdateAction extends DBOperation{
     
     private final int updateStep = 5;// количество шагов для операции импорта
     private int step = -1;// номер шага для выбранной операции с базой данных
-    private DefaultListModel model;// модель для заполнения списка
+//    private DefaultListModel model;// модель для заполнения списка
     private String keyColumn;// имя ключевого поля для обновления данных
 
     public DBUpdateAction(JList lstTableName, JList lstTargetList, 
@@ -93,7 +91,7 @@ public class DBUpdateAction extends DBOperation{
     
     
     private void addListItemUpdate() {
-        model = new DefaultListModel();
+//        model = new DefaultListModel();
         switch(step){
             case 0:// выбор таблицы
 
@@ -105,7 +103,7 @@ public class DBUpdateAction extends DBOperation{
                 break;
             case 2:// выбор ключевого поля
                 // добавляем в модель
-                model.addElement(super.getLstTableName().getSelectedValue());
+//                model.addElement(super.getLstTableName().getSelectedValue());
 
                 // первая часть - ключевое поле для обновления в таблице
                 // вторая часть - сопоставленное ему поле в массиве данных,

@@ -9,14 +9,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,7 +26,6 @@ public class DBImportAction extends DBOperation {
 
     private final int importStep = 4;// количество шагов для операции импорта
     private int step = -1;// номер шага для выбранной операции с базой данных
-    private DefaultListModel model;// модель для заполнения списка
     
     public DBImportAction(JList lstTableName, JList lstTargetList, 
             JTextArea txtStep, JLabel lblTableName, JLabel lblTargetLabel, JTable tableData,
@@ -207,7 +204,6 @@ public class DBImportAction extends DBOperation {
     }
     
     private void addListItemImport(){
-        model = new DefaultListModel();
         switch(step){
             case 0:// выбор таблицы
 

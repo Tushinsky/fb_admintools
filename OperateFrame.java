@@ -6,6 +6,7 @@ package frame;
 
 import admintools.CSVOperate;
 import admintools.DBImportAction;
+import admintools.DBUpdateAction;
 import admintools.JDBCConnection;
 import java.io.File;
 import java.io.FileInputStream;
@@ -520,6 +521,10 @@ public class OperateFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         idOperation = 2;
         setFrameTitle();
+        DBUpdateAction updateAction = new DBUpdateAction(lstTableName, 
+                lstTargetList, txtStep, jLabel1, jLabel1, jTable1, connection, 
+                btnSendTo, btnNext, btnPreviouse, OKButton);
+        updateAction.Start();// начало операции по обновлению данных
 //        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataUpdateActionPerformed
 
@@ -1321,18 +1326,18 @@ public class OperateFrame extends javax.swing.JFrame {
             String fields = fieldList.substring(0, fieldList.length() - 1);
             // строка-запрос на выборку данных
             String sqlQuery = "SELECT " + fields + " FROM " + table + ";";
-                try {
-                    DBTableModel tModel = 
-                            new DBTableModel(connection.ExecuteQuery(sqlQuery));
-                    DefaultTableModel dtModel = 
-                            new DefaultTableModel(tModel.getContent(), 
-                            tModel.getColumnName());
-                    // модель данных для таблицы
-                    jTable1.setModel(dtModel);
-                } catch (SQLException ex) {
-                    Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE,
-                            null, ex);
-                }
+            try {
+                DBTableModel tModel = 
+                        new DBTableModel(connection.ExecuteQuery(sqlQuery));
+                DefaultTableModel dtModel = 
+                        new DefaultTableModel(tModel.getContent(), 
+                        tModel.getColumnName());
+                // модель данных для таблицы
+                jTable1.setModel(dtModel);
+            } catch (SQLException ex) {
+                Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE,
+                        null, ex);
+            }
         }
 
 
