@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -59,14 +60,6 @@ public class OperateFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        OptionDialog = new javax.swing.JDialog();
-        chkHeader = new javax.swing.JCheckBox();
-        jPanel1 = new javax.swing.JPanel();
-        CommaRadioBtn = new javax.swing.JRadioButton();
-        CommaPointRadioBtn = new javax.swing.JRadioButton();
-        TwinPointRadioBtn = new javax.swing.JRadioButton();
-        YesButton = new javax.swing.JButton();
-        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         btnOpenFile = new javax.swing.JButton();
@@ -91,91 +84,13 @@ public class OperateFrame extends javax.swing.JFrame {
         mnuFileConnection = new javax.swing.JMenu();
         mnuConnectProperties = new javax.swing.JMenuItem();
         mnuConnectParameters = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        mnuFileOpen = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         mnuFileExit = new javax.swing.JMenuItem();
         mnuData = new javax.swing.JMenu();
         mnuDataImport = new javax.swing.JMenuItem();
         mnuDataExport = new javax.swing.JMenuItem();
         mnuDataUpdate = new javax.swing.JMenuItem();
-
-        OptionDialog.setModal(true);
-
-        chkHeader.setSelected(true);
-        chkHeader.setText("В первой строке заголовки столбцов");
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Разделитель полей"));
-
-        buttonGroup1.add(CommaRadioBtn);
-        CommaRadioBtn.setText("Запятая");
-
-        buttonGroup1.add(CommaPointRadioBtn);
-        CommaPointRadioBtn.setSelected(true);
-        CommaPointRadioBtn.setText("Точка с запятой");
-
-        buttonGroup1.add(TwinPointRadioBtn);
-        TwinPointRadioBtn.setText("Двоеточие");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(CommaRadioBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(CommaPointRadioBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TwinPointRadioBtn)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CommaRadioBtn)
-                    .addComponent(CommaPointRadioBtn)
-                    .addComponent(TwinPointRadioBtn))
-                .addGap(26, 26, 26))
-        );
-
-        YesButton.setText("ОК");
-        YesButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                YesButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout OptionDialogLayout = new javax.swing.GroupLayout(OptionDialog.getContentPane());
-        OptionDialog.getContentPane().setLayout(OptionDialogLayout);
-        OptionDialogLayout.setHorizontalGroup(
-            OptionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(OptionDialogLayout.createSequentialGroup()
-                .addGroup(OptionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(OptionDialogLayout.createSequentialGroup()
-                        .addGap(123, 123, 123)
-                        .addComponent(YesButton))
-                    .addGroup(OptionDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(chkHeader)))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        OptionDialogLayout.setVerticalGroup(
-            OptionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(OptionDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chkHeader)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(YesButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentHidden(java.awt.event.ComponentEvent evt) {
@@ -286,10 +201,15 @@ public class OperateFrame extends javax.swing.JFrame {
 
         mnuFile.add(mnuFileConnection);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/OpenFile.png"))); // NOI18N
-        jMenuItem2.setText("Открыть");
-        mnuFile.add(jMenuItem2);
+        mnuFileOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        mnuFileOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/OpenFile.png"))); // NOI18N
+        mnuFileOpen.setText("Открыть");
+        mnuFileOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuFileOpenActionPerformed(evt);
+            }
+        });
+        mnuFile.add(mnuFileOpen);
         mnuFile.add(jSeparator1);
 
         mnuFileExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/exit.png"))); // NOI18N
@@ -458,42 +378,45 @@ public class OperateFrame extends javax.swing.JFrame {
                 
 //                setTitle(getTitle() + " : " + name);
                 // окно дополнительных параметров файла
-                OptionDialog.setSize(305, 147);
-                OptionDialog.setLocationRelativeTo(this);
-                OptionDialog.setVisible(true);
-                String separator;
-                // проверем выбор пользователя
-                CSVOperate csvReader = new CSVOperate();
-                csvReader.setFileName(name);
-                csvReader.setHeader(chkHeader.isSelected());// есть ли заголовки
-                if(CommaRadioBtn.isSelected()){
-                    separator = ",";
-                } else if(CommaPointRadioBtn.isSelected()){
-                    separator = ";";
-                } else {
-                    separator = ":";
+                OptionCSVDialog csvDialog = new OptionCSVDialog(this, true);
+                csvDialog.setLocationRelativeTo(this);// выводим окно в центре экрана
+                csvDialog.setVisible(true);
+                csvDialog.setHeader(false);
+//                OptionDialog.setSize(305, 160);
+//                OptionDialog.setLocationRelativeTo(this);
+//                OptionDialog.setVisible(true);
+                if(csvDialog.isOk()) {
+                    String separator = csvDialog.getSeparator();
+                    boolean header = csvDialog.isHeader();
+                    // проверем выбор пользователя
+                    CSVOperate csvReader = new CSVOperate();
+                    csvReader.setFileName(name);
+                    csvReader.setHeader(header);// есть ли заголовки
+//                    if(CommaRadioBtn.isSelected()){
+//                        separator = ",";
+//                    } else if(CommaPointRadioBtn.isSelected()){
+//                        separator = ";";
+//                    } else {
+//                        separator = ":";
+//                    }
+                    csvReader.setSeparator(separator);
+                    csvReader.readData();
+                    Object[][] content = csvReader.getData();
+                    String[] columnName = csvReader.getColumnName();
+                    // получаем модель данных для таблицы
+                    DefaultTableModel model = new DefaultTableModel(content, 
+                            columnName);
+                    jTable1.setModel(model);
+    //                btnNext.doClick();
+    //                btnNext.setEnabled(false);
+    //                Operations.addListItem();// 
                 }
-                csvReader.setSeparator(separator);
-                csvReader.readData();
-                
-                // получаем модель данных для таблицы
-                DefaultTableModel model = new DefaultTableModel(csvReader.getData(), 
-                        csvReader.getColumnName());
-                jTable1.setModel(model);
-//                btnNext.doClick();
-//                btnNext.setEnabled(false);
-//                Operations.addListItem();// 
             } catch (IOException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
             
         }
     }//GEN-LAST:event_btnOpenFileActionPerformed
-
-    private void YesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YesButtonActionPerformed
-        // скрываем диалоговое окно дополнительных настроек
-        OptionDialog.setVisible(false);
-    }//GEN-LAST:event_YesButtonActionPerformed
 
     private void mnuFileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuFileExitActionPerformed
         // TODO add your handling code here:
@@ -560,6 +483,11 @@ public class OperateFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mnuConnectParametersActionPerformed
 
+    private void mnuFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuFileOpenActionPerformed
+        // TODO add your handling code here:
+        btnOpenFile.doClick();
+    }//GEN-LAST:event_mnuFileOpenActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -600,26 +528,17 @@ public class OperateFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton CommaPointRadioBtn;
-    private javax.swing.JRadioButton CommaRadioBtn;
     private javax.swing.JButton OKButton;
     private javax.swing.JProgressBar OperateProgressBar;
-    private javax.swing.JDialog OptionDialog;
-    private javax.swing.JRadioButton TwinPointRadioBtn;
-    private javax.swing.JButton YesButton;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnOpenFile;
     private javax.swing.JButton btnPreviouse;
     private javax.swing.JButton btnSendTo;
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JCheckBox chkHeader;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -638,6 +557,7 @@ public class OperateFrame extends javax.swing.JFrame {
     private javax.swing.JMenu mnuFile;
     private javax.swing.JMenu mnuFileConnection;
     private javax.swing.JMenuItem mnuFileExit;
+    private javax.swing.JMenuItem mnuFileOpen;
     private javax.swing.JTextArea txtStep;
     // End of variables declaration//GEN-END:variables
 
@@ -1606,40 +1526,19 @@ public class OperateFrame extends javax.swing.JFrame {
         idialog.setVisible(true);
     }
     
-    /**
-     * Читает свойства соединения из выбранного файла свойств
-     * @param filename имя файла свойств для чтения
-     */
-    private void readConnectProperies(java.io.File filename) throws IOException {
-        Properties props = new Properties();// создаём класс для чтения из файла свойств
-        try {
-            LoginFrame logFrame = new LoginFrame();// окно ввода параметров соединения
-            
-            // создаём поток чтения данных из файла
-            FileInputStream fin = new FileInputStream(filename);
-            props.load(fin);// считываем свойства
-            
-            // получаем все перечисенные свойства
-            Enumeration e = props.propertyNames();
-            while(e.hasMoreElements()) {
-                String propName = e.nextElement().toString();// получаем имя свойства
-                System.out.println(propName.toLowerCase() + "=" + props.getProperty(propName));
-                // проверяем, что содержится в имени свойства
-                if(propName.toLowerCase().contains("database")) {
-                    logFrame.setDatabaseName(props.getProperty(propName));
-                } else if(propName.toLowerCase().contains("hostip")) {
-                    logFrame.setHostIP(props.getProperty(propName));
-                } else if(propName.toLowerCase().contains("serverport")) {
-                    logFrame.setServerPort(props.getProperty(propName));
-                } else if(propName.toLowerCase().contains("user")) {
-                    logFrame.setUserName(props.getProperty(propName));
-                }
-            }
-            
-            // выводим на экран окно для ввода пароля
-            logFrame.showDialog(this);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+    private class MyTableModelImpl extends MyTableModel {
+        
+        public MyTableModelImpl(ResultSet resultset) throws SQLException {
+            super(resultset);
         }
+
+        public MyTableModelImpl(Object[][] content, String[] columnName, Class[] columnClass) {
+            super(content, columnName, columnClass);
+        }
+
+        public MyTableModelImpl(Object[][] content) {
+            super(content);
+        }
+        
     }
 }

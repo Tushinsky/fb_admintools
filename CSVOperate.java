@@ -17,25 +17,29 @@ import java.util.logging.Logger;
  * @author lera
  */
 public class CSVOperate {
-    private String fileName;// ��� ����� csv
-    private String separator;// ������ - ����������� �����
-    private Object[][] data;// ������ ������
-    private Object[] columnName;// ������������ ��������
-    private boolean header;// ���� ������� � ������ ������ ���������� ��������
-    private BufferedReader reader;
+    private String fileName;// имя файла csv
+    private String separator;// символ - разделитель полей
+    private Object[][] data;// массив данных
+    private String[] columnName;// наименования столбцов
+    private boolean header;// флаг наличия в первой строке наименований заголовков столбцов
+    private BufferedReader reader;// класс для чтения файла
     
-    // ����������� �� ���������
     public CSVOperate(){
         
     }
     
-    // ����������� � �������� ������ ��������� ����� � �������� �������� ������������
+    /**
+     * Конструктор класса
+     * @param filename имя файла, содержащего данные
+     * @param separator символ - разделитель полей данных
+     */
     public CSVOperate(String filename, String separator){
         this.fileName = filename;
         this.separator = separator;
     }
 
     /**
+     * Задаёт имя файла .CSV
      * @param fileName the fileName to set
      */
     public void setFileName(String fileName) {
@@ -43,6 +47,7 @@ public class CSVOperate {
     }
 
     /**
+     * Задаёт символ - разделитель данных
      * @param separator the separator to set
      */
     public void setSeparator(String separator) {
@@ -50,6 +55,7 @@ public class CSVOperate {
     }
 
     /**
+     * Возвращает массив, содержащий данные
      * @return the data
      */
     public Object[][] getData() {
@@ -57,6 +63,7 @@ public class CSVOperate {
     }
 
     /**
+     * Задаёт массив, содержащий данные
      * @param data the data to set
      */
     public void setData(Object[][] data) {
@@ -64,7 +71,7 @@ public class CSVOperate {
     }
     
     /**
-     * ������ ������ �� ���������� �����
+     * Считывает данные из файла
      */
     public void readData(){
         try {
@@ -75,13 +82,14 @@ public class CSVOperate {
     }
     
     /**
-     * ���������� ������ � ��������� ����
+     * Записывает данные в файл
      */
     public void writeData(){
         writeFile();
     }
 
     /**
+     * Возвращает флаг наличия в первой строке данных заголовков столбцов
      * @return the header
      */
     public boolean isHeader() {
@@ -89,31 +97,36 @@ public class CSVOperate {
     }
 
     /**
+     * Задаёт флаг наличия в первой строке данных заголовков столбцов
      * @param header the header to set
      */
     public void setHeader(boolean header) {
         this.header = header;
     }
     
+    /**
+     * Чтение данных из указанного файла
+     * @throws FileNotFoundException если указанный файл не найден
+     */
     private void readFile() throws FileNotFoundException{
         try {
             reader = new BufferedReader(new FileReader(fileName));
             
-            // ������ ���� ������ �� �������
-            if(!header){
-                getCellData();// ������ ��� ������
-                // ���� ��������� �� �������, ��������� �� �� ���������
-                columnName = new Object[data[1].length];
+            // проверяем флаг наличия заголовков столбцов
+            if(header == false){
+                getCellData();// чтение файла данных
+                // получаем наименования столбцов
+                columnName = new String[data[1].length];
                 for(int i = 0; i <columnName.length; i++){
                     int j = i + 1;
-                    columnName[i] = (Object) ("A" + j);
+                    columnName[i] = ("A" + j);
                 }
             } else{
-                // ���� ��������� �������
+                // если в первой строке заголовков нет
                 String line;
-                line = reader.readLine();// ������ ������ ������
-                columnName = (String[]) line.split(separator);// ���������
-                // ������ ��������� ������
+                line = reader.readLine();// читаем первую строку
+                columnName = (String[]) line.split(separator);// преобразуем в массив наименований столбцов
+                // получаем данные
                 getCellData();
             }
         } catch (IOException ex) {
@@ -128,14 +141,14 @@ public class CSVOperate {
     /**
      * @return the columnName
      */
-    public Object[] getColumnName() {
+    public String[] getColumnName() {
         return columnName;
     }
 
     /**
      * @param columnName the columnName to set
      */
-    public void setColumnName(Object[] columnName) {
+    public void setColumnName(String[] columnName) {
         this.columnName = columnName;
     }
     
