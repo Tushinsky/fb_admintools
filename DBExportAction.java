@@ -6,7 +6,6 @@
 package admintools;
 
 import frame.DBTableModel;
-import frame.OperateFrame;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,7 +92,7 @@ public class DBExportAction extends DBOperation {
                 // модель данных для таблицы
                 super.getTableData().setModel(dtModel);
             } catch (SQLException ex) {
-                Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(DBExportAction.class.getName()).log(Level.SEVERE,
                         null, ex);
             }
     }
