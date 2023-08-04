@@ -55,8 +55,7 @@ public class DBUpdateAction extends DBOperation{
         if(step <= updateStep){
             updateData();
             // блокируем кнопки перемещения элементов списка и следующего шага
-            super.getBtnSendTo().setEnabled(false);
-            super.getBtnMoveNext().setEnabled(false);
+            super.setButtonEnabled();
         } else{
             step--;
             }
@@ -69,8 +68,7 @@ public class DBUpdateAction extends DBOperation{
         step--;
         if(step >= 0){
             // блокируем кнопки перемещения элементов списка и следующего шага
-            super.getBtnSendTo().setEnabled(false);
-            super.getBtnMoveNext().setEnabled(false);
+            super.setButtonEnabled();
             updateData();
         } else{
             step = 0;
@@ -230,7 +228,7 @@ public class DBUpdateAction extends DBOperation{
             }
             // удаляем последний символ ","
             String values = listvalues.substring(0, listvalues.length() - 1);
-            sqlQuery = "UPDATE " + super.getTable() + " SET " + values + " WHERE " +
+            sqlQuery = "UPDATE " + super.getTablename() + " SET " + values + " WHERE " +
                     tbKey + "=" + super.getConnection().getCellValue(tbKey,
                         super.getTableData().getValueAt(i, Index).toString()) + ";";
             

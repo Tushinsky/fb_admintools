@@ -52,8 +52,7 @@ public class DBImportAction extends DBOperation {
         if(step <= importStep){
             importData();
             // блокируем кнопки перемещения элементов списка и следующего шага
-            super.getBtnSendTo().setEnabled(false);
-            super.getBtnMoveNext().setEnabled(false);
+            super.setButtonEnabled();
         } else{
             step--;
             }
@@ -66,8 +65,7 @@ public class DBImportAction extends DBOperation {
         step--;
         if(step >= 0){
             // блокируем кнопки перемещения элементов списка и следующего шага
-            super.getBtnSendTo().setEnabled(false);
-            super.getBtnMoveNext().setEnabled(false);
+            super.setButtonEnabled();
             importData();
         } else{
             step = 0;
@@ -174,7 +172,7 @@ public class DBImportAction extends DBOperation {
                 listvalues = listvalues + value + ",";
             }
             String values = listvalues.substring(0, listvalues.length() - 1);
-            sqlQuery = "INSERT INTO " + super.getTable() + "(" + fields + ")" +
+            sqlQuery = "INSERT INTO " + super.getTablename() + "(" + fields + ")" +
                     " VALUES(" + values + ");";
             int count = 0;
                 try {

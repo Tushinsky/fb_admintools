@@ -9,6 +9,11 @@ import frame.DBTableModel;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,17 +25,43 @@ public class DBExportAction extends DBOperation {
     private final int exportStep = 3;// количество шагов для операции импорта
     private int step = -1;// номер шага для выбранной операции с базой данных
 
-    public DBExportAction() {
+    public DBExportAction(JList lstTableName, JList lstTargetList, 
+            JTextArea txtStep, JLabel lblTableName, JLabel lblTargetLabel, JTable tableData,
+            JDBCConnection connection, JButton btnSendTo, 
+            JButton btnMoveNext, JButton btnMovePrevoiuse, 
+            JButton btnOkButton) {
+        super(connection, lstTableName, lstTargetList, txtStep, lblTableName, 
+                lblTargetLabel, tableData, btnSendTo, btnMoveNext, 
+                btnMovePrevoiuse, btnOkButton);
+        
     }
 
     @Override
     public void moveNext() {
-        super.moveNext(); //To change body of generated methods, choose Tools | Templates.
+        //To change body of generated methods, choose Tools | Templates.
+        // увеличиваем шаг
+        step++;
+        if(step <= exportStep){
+            exportData();
+            // блокируем кнопки перемещения элементов списка и следующего шага
+            super.setButtonEnabled();
+        } else{
+            step--;
+            }
     }
 
     @Override
     public void movePreviouse() {
-        super.movePreviouse(); //To change body of generated methods, choose Tools | Templates.
+        //To change body of generated methods, choose Tools | Templates.
+        // уменьшаем шаг
+        step--;
+        if(step >= 0){
+            // блокируем кнопки перемещения элементов списка и следующего шага
+            super.setButtonEnabled();
+            exportData();
+        } else{
+            step = 0;
+        }
     }
 
     @Override
@@ -82,7 +113,7 @@ public class DBExportAction extends DBOperation {
         // удаляем последний символ
         String fields = fieldList.substring(0, fieldList.length() - 1);
         // строка-запрос на выборку данных
-        String sqlQuery = "SELECT " + fields + " FROM " + super.getTable() + ";";
+        String sqlQuery = "SELECT " + fields + " FROM " + super.getTablename() + ";";
             try {
                 DBTableModel tModel = 
                         new DBTableModel(super.getConnection().ExecuteQuery(sqlQuery));

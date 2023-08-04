@@ -126,6 +126,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="&#x417;&#x430;&#x43f;&#x44f;&#x442;&#x430;&#x44f;"/>
           </Properties>
           <Events>
@@ -140,7 +141,6 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="&#x422;&#x43e;&#x447;&#x43a;&#x430; &#x441; &#x437;&#x430;&#x43f;&#x44f;&#x442;&#x43e;&#x439;"/>
           </Properties>
           <Events>

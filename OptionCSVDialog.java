@@ -22,6 +22,7 @@ public class OptionCSVDialog extends javax.swing.JDialog {
     public OptionCSVDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.CommaPointRadioBtn.setSelected(true);
     }
 
     /**
@@ -56,6 +57,7 @@ public class OptionCSVDialog extends javax.swing.JDialog {
 
         buttonGroup1.add(CommaRadioBtn);
         CommaRadioBtn.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        CommaRadioBtn.setSelected(true);
         CommaRadioBtn.setText("Запятая");
         CommaRadioBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -65,7 +67,6 @@ public class OptionCSVDialog extends javax.swing.JDialog {
 
         buttonGroup1.add(CommaPointRadioBtn);
         CommaPointRadioBtn.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        CommaPointRadioBtn.setSelected(true);
         CommaPointRadioBtn.setText("Точка с запятой");
         CommaPointRadioBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -261,6 +262,7 @@ public class OptionCSVDialog extends javax.swing.JDialog {
      * @return the header
      */
     public boolean isHeader() {
+//        System.out.println("header=" + header);
         return header;
     }
 
