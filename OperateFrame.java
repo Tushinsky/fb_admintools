@@ -5,6 +5,7 @@
 package frame;
 
 import admintools.CSVOperate;
+import admintools.DBExportAction;
 import admintools.DBImportAction;
 import admintools.DBUpdateAction;
 import admintools.JDBCConnection;
@@ -380,27 +381,15 @@ public class OperateFrame extends javax.swing.JFrame {
                 // окно дополнительных параметров файла
                 OptionCSVDialog csvDialog = new OptionCSVDialog(this, true);
                 csvDialog.setLocationRelativeTo(this);// выводим окно в центре экрана
-                csvDialog.setVisible(true);
                 csvDialog.setHeader(false);
-//                OptionDialog.setSize(305, 160);
-//                OptionDialog.setLocationRelativeTo(this);
-//                OptionDialog.setVisible(true);
+                csvDialog.setVisible(true);
                 if(csvDialog.isOk()) {
                     String separator = csvDialog.getSeparator();
                     boolean header = csvDialog.isHeader();
                     // проверем выбор пользователя
-                    CSVOperate csvReader = new CSVOperate();
-                    csvReader.setFileName(name);
+                    CSVOperate csvReader = new CSVOperate(name, separator);
                     csvReader.setHeader(header);// есть ли заголовки
-//                    if(CommaRadioBtn.isSelected()){
-//                        separator = ",";
-//                    } else if(CommaPointRadioBtn.isSelected()){
-//                        separator = ";";
-//                    } else {
-//                        separator = ":";
-//                    }
-                    csvReader.setSeparator(separator);
-                    csvReader.readData();
+                    csvReader.readData();// считываем данные из файла
                     Object[][] content = csvReader.getData();
                     String[] columnName = csvReader.getColumnName();
                     // получаем модель данных для таблицы
@@ -436,6 +425,9 @@ public class OperateFrame extends javax.swing.JFrame {
     private void mnuDataExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataExportActionPerformed
         // TODO add your handling code here:
         idOperation = 1;
+        DBExportAction exportAction = new DBExportAction(lstTableName, 
+                lstTargetList, txtStep, jLabel1, jLabel2, jTable1, connection, 
+                btnSendTo, btnNext, btnPreviouse, OKButton);
         setFrameTitle();
 //        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataExportActionPerformed
@@ -445,7 +437,7 @@ public class OperateFrame extends javax.swing.JFrame {
         idOperation = 2;
         setFrameTitle();
         DBUpdateAction updateAction = new DBUpdateAction(lstTableName, 
-                lstTargetList, txtStep, jLabel1, jLabel1, jTable1, connection, 
+                lstTargetList, txtStep, jLabel1, jLabel2, jTable1, connection, 
                 btnSendTo, btnNext, btnPreviouse, OKButton);
         updateAction.Start();// начало операции по обновлению данных
 //        dbOperate.moveNext();

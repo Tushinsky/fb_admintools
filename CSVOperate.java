@@ -111,7 +111,7 @@ public class CSVOperate {
     private void readFile() throws FileNotFoundException{
         try {
             reader = new BufferedReader(new FileReader(fileName));
-            
+//            System.out.println("header=" + header);
             // проверяем флаг наличия заголовков столбцов
             if(header == false){
                 getCellData();// чтение файла данных
@@ -153,21 +153,26 @@ public class CSVOperate {
     }
     
     private void getCellData() throws IOException{
-        ArrayList rowList = new ArrayList();
-        String line;
+        ArrayList rowList = new ArrayList();// массив, в котором будут храниться преобразованные данные
+        String line;// переменная, в которую будут считываться данные
         while((line = reader.readLine()) != null){
+            // читаем файл, пока данные есть
+            
+            // преобразуем считываемую строку в массив, используя заданный разделитель
             String[] values = line.split(separator);
-            ArrayList colList = new ArrayList();
+            
+            ArrayList colList = new ArrayList();// промежуточный список для хранения данных
             for (String value : values) {
-                Object cellValue = (Object) value;
-                colList.add(cellValue);
+                Object cellValue = (Object) value;// приведение типа данных
+                colList.add(cellValue);// добавление в список
             }
             Object[] cells = null;
-            if(!colList.isEmpty()) cells = colList.toArray();
-            rowList.add(cells);
+            if(!colList.isEmpty()) cells = colList.toArray();// преобразуем список в массив
+            rowList.add(cells);// добавляем его в начальный список
         }
         data = new Object[rowList.size()][];
         for (int i = 0; i < data.length; i++) {
+            // вносим данные в массив
             data[i] = (Object[]) (Object) rowList.get(i);
         }
     }

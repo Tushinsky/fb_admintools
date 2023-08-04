@@ -153,7 +153,7 @@ public class DBOperation implements MoveOnStepImpl {
     private JDBCConnection connection;
     private Object[] table_Name;// массив с именами таблиц базы данных
     private Object[] column_Name;// массив с именами полей выбранной таблицы
-    private String table;// имя выбранной таблицы
+    private String tablename;// имя выбранной таблицы
     private JList lstTableName;// список с именами таблиц базы данных
     private JList lstTargetList;// целевой список
     private JTextArea txtStep;// поле ввода с описание шагов операции
@@ -202,6 +202,7 @@ public class DBOperation implements MoveOnStepImpl {
 
     @Override
     public void moveNext() {
+        
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -258,22 +259,22 @@ public class DBOperation implements MoveOnStepImpl {
     }
     
     private Object[] getDBTableColumnName() {
-        column_Name = getConnection().getListColumnTable(table);
+        column_Name = getConnection().getListColumnTable(tablename);
         return column_Name;
     }
 
     /**
-     * @return the table
+     * @return the tablename
      */
-    public String getTable() {
-        return table;
+    public String getTablename() {
+        return tablename;
     }
 
     /**
-     * @param table the table to set
+     * @param tablename the tablename to set
      */
-    public void setTable(String table) {
-        this.table = table;
+    public void setTablename(String tablename) {
+        this.tablename = tablename;
     }
 
     /**
@@ -330,7 +331,7 @@ public class DBOperation implements MoveOnStepImpl {
         model = new DefaultListModel();
         // добавляем в модель
         model.addElement(lstTableName.getSelectedValue());
-        table = lstTableName.getSelectedValue().toString();
+        tablename = lstTableName.getSelectedValue().toString();
 
         // устанавливаем модель для списка
         lstTargetList.setModel(model);
@@ -440,7 +441,7 @@ public class DBOperation implements MoveOnStepImpl {
         // удаляем последний символ
         String fields = fieldList.substring(0, fieldList.length() - 1);
         // строка-запрос на выборку данных
-        String sqlQuery = "SELECT " + fields + " FROM " + table + ";";
+        String sqlQuery = "SELECT " + fields + " FROM " + tablename + ";";
         try {
             
             DBTableModel tModel = 
@@ -454,5 +455,11 @@ public class DBOperation implements MoveOnStepImpl {
             Logger.getLogger(DBOperation.class.getName()).log(Level.SEVERE,
                     null, ex);
         }
+    }
+    
+    public void setButtonEnabled() {
+        btnSendTo.setEnabled(false);
+        btnMoveNext.setEnabled(false);
+        btnMovePreviouse.setEnabled(true);
     }
 }
