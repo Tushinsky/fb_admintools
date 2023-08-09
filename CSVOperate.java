@@ -5,8 +5,10 @@
 package admintools;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -83,9 +85,10 @@ public class CSVOperate {
     
     /**
      * Записывает данные в файл
+     * @return количество записей, выведенных в файл
      */
-    public void writeData(){
-        writeFile();
+    public int writeData(){
+        return writeFile();
     }
 
     /**
@@ -134,8 +137,42 @@ public class CSVOperate {
         }
     }
     
-    private void writeFile(){
-        
+    private int writeFile(){
+        int counter = 0;// счётчик записей
+        try {
+            // создаём объект для записи данных в файл
+            BufferedWriter writer;
+            writer = new BufferedWriter(new FileWriter(fileName));
+            
+            // проверяем наличие заголовков
+            if(columnName != null) {
+                // если они заданы, записываем их в файл
+                String columns = "";
+                for(String columnName1 : columnName)
+                    columns = columns + columnName1 + separator;
+                columns = columns.substring(0, columns.length() - 1);// отсекаем последний символ
+                writer.write(columns);// записываем строку в файл
+                writer.newLine();// добавляем перевод на новую строку
+                counter++;// увеличиваем счётчик записей
+            }
+            for (Object[] data1 : data) {
+                // формируем строку для записи
+                String strData = "";
+                for (Object data11 : data1) {
+                    strData = strData + data11 + separator;// добавляем символ - разделитель
+                }
+                String line = strData.substring(0, strData.length() - 1);// обрезаем последний символ
+//                System.out.println("line: " + line);
+                writer.write(line);// записываем строку
+                writer.newLine();// добавляем перевод на новую строку
+                counter++;// увеличиваем счётчик записей
+            }
+            writer.close();// закрываем объект записи
+            
+        } catch (IOException ex) {
+            Logger.getLogger(CSVOperate.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return counter;
     }
 
     /**

@@ -6,14 +6,22 @@
 package admintools;
 
 import frame.DBTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -33,7 +41,13 @@ public class DBExportAction extends DBOperation {
         super(connection, lstTableName, lstTargetList, txtStep, lblTableName, 
                 lblTargetLabel, tableData, btnSendTo, btnMoveNext, 
                 btnMovePrevoiuse, btnOkButton);
-        
+        // добавляем слушатели элементам интерфейса
+        super.getBtnMoveNext().addActionListener(MoveNextListener());
+        super.getBtnMovePreviouse().addActionListener(MovePreviouseListener());
+        super.getBtnSendTo().addActionListener(ButtonSendToListener());
+        super.getBtnOkButton().addActionListener(ButtonOkListener());
+        super.getLstTableName().addListSelectionListener(ListNameListener());
+        super.getLstTargetList().addListSelectionListener(ListTargetListener());
     }
 
     @Override
@@ -66,7 +80,7 @@ public class DBExportAction extends DBOperation {
 
     @Override
     public void Start() {
-        super.Start(); //To change body of generated methods, choose Tools | Templates.
+        moveNext(); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**
@@ -93,9 +107,13 @@ public class DBExportAction extends DBOperation {
                 super.getBtnOkButton().setEnabled(true);
                 break;
             case 3:
-                int count = 0;
-                String text = super.getTxtStep().getText() + "\n\r";
-                super.getTxtStep().setText(text + "Выполнен экспорт данных в количестве " + count);
+                String filename = getFileName();
+                if(filename != null) {
+                    System.out.println("filename" + filename);
+                    int count = exportDataFromDB(filename);
+                    String text = super.getTxtStep().getText() + "\n\r";
+                    super.getTxtStep().setText(text + "Выполнен экспорт данных в количестве " + count);
+                }
                 break;
         }
     }
@@ -128,5 +146,192 @@ public class DBExportAction extends DBOperation {
             }
     }
 
+    /**
+     * Вполняет экспорт данных в указанный файл
+     * @param filename имя файла для экспорта данных
+     * @return количество записей, которые были экспортированы
+     */
+    private int exportDataFromDB(String filename) {
+        int columnCount = super.getTableData().getColumnCount();// количество столбцов таблицы
+        int rowCount = super.getTableData().getRowCount();// количество строк таблицы
+        Object[][] data = new Object[rowCount][];// массив данных для экспорта
+        // формируем данные
+        for(int i = 0; i < rowCount; i++){
+            Object[] row = new Object[columnCount];
+            for(int j = 0; j < columnCount; j++) {
+                row[j] = super.getTableData().getValueAt(i, j);
+            }
+            data[i] = row;// записываем сформированные данные в массив
+        }
+        // формируем заголовки столбцов
+        String[] columnName = new String[columnCount];
+        for(int i = 0; i < columnCount; i++) {
+            columnName[i] = super.getTableData().getColumnName(i);
+        }
+        CSVOperate operate = new CSVOperate(filename, ";");// создаём класс для экспорта данных
+        operate.setData(data);// задаём данные для экспорта
+        operate.setColumnName(columnName);// задаём заголовки столбцов
+        
+        return operate.writeData();// пытаемся выполнить экспорт
+    }
+    
+    /**
+     * Возвращает имя файла CSV, в который будут экспортироваться данные
+     * @return имя файла для экспорта данных
+     */
+    private String getFileName() {
+        // отображаем окно выбора файла
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("."));
+        // фильтр файлов по формату
+        FileFilter filter = new FileFilter() {
 
+            @Override
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".csv") || 
+                        f.getName().toLowerCase().endsWith(".txt") || 
+                        f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Текстовые файлы с разделителями (*.csv,*.txt)";
+            }
+        };
+        chooser.setFileFilter(filter);// устанавливаем фильтр для окна выбора файла
+        int result = chooser.showSaveDialog(null);
+        if(result == JFileChooser.APPROVE_OPTION) try {
+            System.out.println(chooser.getSelectedFile().getCanonicalPath());
+            return chooser.getSelectedFile().getCanonicalPath();
+        } catch (IOException ex) {
+            Logger.getLogger(DBExportAction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    /**
+     * Создаёт слушатель для действия MoveNext
+     * @return созданный слушатель
+     */
+    private ActionListener MoveNextListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            moveNext();
+            // на начальном этапе кнопка Previouse блокируется, на всех остальных она доступна
+            if(step > 0) super.getBtnMovePreviouse().setEnabled(true);
+        };
+        return listener;
+    }
+    
+    /**
+     * Создаёт слушатель для действия MovePreviouse
+     * @return созданный слушатель
+     */
+    private ActionListener MovePreviouseListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            movePreviouse();
+        };
+        return listener;
+    }
+    
+    /**
+     * Создаёт слушатель для заполнения списков
+     * @return созданный слушатель
+     */
+    private ActionListener ButtonSendToListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+//            if(super.getLstTableName().getSelectedIndices().length > 0){
+//            try{
+                addListItemExport();
+                // разрешаем доступ к выполнению следующего шага
+                super.getBtnMoveNext().setEnabled(true);
+//            } catch(Exception ex) {
+//                // сообщение об ошибке
+//                JOptionPane.showMessageDialog(null, ex.getMessage(), "OperateFrame", JOptionPane.ERROR_MESSAGE);
+//            }
+            
+//        }
+        };
+        return listener;
+    }
+    
+    
+    
+    /**
+     * Создаёт слушатель для подтверждения действия импорта
+     * @return созданный слушатель
+     */
+    private ActionListener ButtonOkListener() {
+        ActionListener listener;
+        listener = (ActionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            moveNext();
+        };
+        return listener;
+    }
+    
+    /**
+     * создаёт слушатель для списка наименований таблиц и полей выбранной таблицы
+     * @return созданный слушатель
+     */
+    private ListSelectionListener ListNameListener() {
+        ListSelectionListener listener = (ListSelectionEvent e) -> {
+            
+            /*
+            после выбора элемента списка разблокируем кнопку перемещения 
+            */
+            switch(step) {
+                case 0:
+                case 1:
+                    // выбор таблицы
+                    // выбор полей таблицы
+                    super.getBtnSendTo().setEnabled(true);
+                    break;
+                case 2:
+                    // экспорт данных
+                    super.getBtnSendTo().setEnabled(false);
+                    break;
+            }
+            
+        };
+        return listener;
+    }
+    
+    /**
+     * Создаёт слушатель для списка, в который переносятся выбранные таблицы и поля
+     * @return созданный слушатель
+     */
+    private ListSelectionListener ListTargetListener() {
+        ListSelectionListener listener = (ListSelectionEvent e) -> {
+            //To change body of generated methods, choose Tools | Templates.
+            /*
+            доступ к кнопке перемещения элементов списка разблокируем только
+            на шаге сопоставления выбранных полей импортируемым полям
+            */
+            if(step == 2) super.getBtnSendTo().setEnabled(true);
+        };
+        return listener;
+    }
+
+    /**
+     * 
+     */
+    private void addListItemExport() {
+        //To change body of generated methods, choose Tools | Templates.
+        switch(step){
+            case 0:// выбор таблицы
+
+                super.sendSelectTableName();
+                break;
+            case 1:// выбор полей
+                super.sendSelectColumnName();
+
+                break;
+        }
+    }
 }
