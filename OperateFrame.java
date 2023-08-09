@@ -429,6 +429,7 @@ public class OperateFrame extends javax.swing.JFrame {
                 lstTargetList, txtStep, jLabel1, jLabel2, jTable1, connection, 
                 btnSendTo, btnNext, btnPreviouse, OKButton);
         setFrameTitle();
+        exportAction.Start();
 //        dbOperate.moveNext();
     }//GEN-LAST:event_mnuDataExportActionPerformed
 
