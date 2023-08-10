@@ -5,7 +5,7 @@
  */
 package admintools;
 
-import frame.OperateFrame;
+import frame.StartFrame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -30,8 +30,8 @@ public class AdminTools {
                     IllegalAccessException | UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(AdminTools.class.getName()).log(Level.SEVERE, null, ex);
             }
-            OperateFrame frame = new OperateFrame();
-            OperateFrame.setDefaultLookAndFeelDecorated(true);
+            StartFrame frame = new StartFrame();
+            StartFrame.setDefaultLookAndFeelDecorated(true);
 //            frame.setTitle("AdminTools");// задаём заголовок
 //            frame.setType(Window.Type.NORMAL);
 //            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
