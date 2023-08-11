@@ -6,6 +6,7 @@
 package frame;
 
 import admintools.JDBCConnection;
+import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,11 +21,14 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -70,7 +74,9 @@ public class StartFrame extends JFrame {
         createMenuData();
         bar.add(mnuData);
         setJMenuBar(bar);
-        setSize(300, 200);
+        this.getContentPane().add(mainPanel());
+//        setSize(300, 200);
+        pack();
     }
     
     /**
@@ -114,12 +120,35 @@ public class StartFrame extends JFrame {
         
     }
     
+    /**
+     * Создаёт главную панель - контейнер, на которой располагаются все остальные элементы
+     * пользовательского интерфейса
+     * @return созданную панель - контейнер
+     */
+    private JPanel mainPanel() {
+        // создаём панель, на которой будут располагаться остальные элементы
+        JPanel mainpanel = new JPanel(new BorderLayout(5, 5));
+        Box connectBox = Box.createHorizontalBox();// контейнер для кнопок открытия соединения
+        Box actionBox = Box.createHorizontalBox();// контейнер для кнопок действий с безой данных
+        JButton propertyButton = new JButton("Открыть файл свойств", 
+                new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png")));
+        propertyButton.addActionListener(openConnectPropertiesListener());
+        JButton paramButton = new JButton("Открыть окно параметров", 
+                new javax.swing.ImageIcon(getClass().getResource("/image/info.png")));
+        paramButton.addActionListener(openConnectParametersListener());
+        connectBox.add(propertyButton);
+        connectBox.add(Box.createHorizontalStrut(5));
+        connectBox.add(paramButton);
+        mainpanel.add(connectBox, BorderLayout.NORTH);
+        return mainpanel;
+    }
+    
     private ActionListener openConnectPropertiesListener() {
         ActionListener listener = (ActionEvent ae) -> {
             //To change body of generated methods, choose Tools | Templates.
             // отображаем диалоговое окно выбора файла
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, .properties", "properties"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, (.properties)", "properties"));
         chooser.showDialog(this, "Открыть файл свойств подключения");
         File f = chooser.getSelectedFile();// выбранный пользователем файл
         if(chooser.accept(f)){
