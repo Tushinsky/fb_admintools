@@ -7,6 +7,7 @@ package frame;
 
 import admintools.JDBCConnection;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -130,17 +133,56 @@ public class StartFrame extends JFrame {
         JPanel mainpanel = new JPanel(new BorderLayout(5, 5));
         Box connectBox = Box.createHorizontalBox();// контейнер для кнопок открытия соединения
         Box actionBox = Box.createHorizontalBox();// контейнер для кнопок действий с безой данных
+        // создаём кнопки открытия соединения
         JButton propertyButton = new JButton("Открыть файл свойств", 
                 new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png")));
         propertyButton.addActionListener(openConnectPropertiesListener());
         JButton paramButton = new JButton("Открыть окно параметров", 
                 new javax.swing.ImageIcon(getClass().getResource("/image/info.png")));
         paramButton.addActionListener(openConnectParametersListener());
+        // добавляем их в контейнер
+        connectBox.add(Box.createHorizontalStrut(5));
         connectBox.add(propertyButton);
         connectBox.add(Box.createHorizontalStrut(5));
         connectBox.add(paramButton);
+        connectBox.add(Box.createHorizontalStrut(5));
+        // задаём для контейнера с кнопками действия границу с заголовком
+        actionBox.setBorder(new TitledBorder(new LineBorder(Color.yellow), "Действие"));
+        // добавляем на него кнопки действия
+        actionBox.add(addActionButton(OperateFrame.Operation.Import, "Импорт"));
+        actionBox.add(Box.createHorizontalStrut(5));
+        actionBox.add(addActionButton(OperateFrame.Operation.Export, "Экспорт"));
+        actionBox.add(Box.createHorizontalStrut(5));
+        actionBox.add(addActionButton(OperateFrame.Operation.Update, "Обновление"));
+        // добавляем кнопку Выход
+        JButton exitButton = new JButton("Выход", 
+                new javax.swing.ImageIcon(getClass().getResource("/image/exit.png")));
+        exitButton.addActionListener((ActionEvent ae) -> {
+            closeConnection();// закрываем соединение с базой
+            System.exit(0);// завершение работы
+        });
+        Box exitBox = Box.createHorizontalBox();
+        exitBox.add(Box.createHorizontalGlue());
+        exitBox.add(exitButton);
+        exitBox.add(Box.createHorizontalGlue());
+        
+        // добавляем контейнеры на главную панель
         mainpanel.add(connectBox, BorderLayout.NORTH);
+        mainpanel.add(actionBox, BorderLayout.CENTER);
+        mainpanel.add(exitBox, BorderLayout.SOUTH);
         return mainpanel;
+    }
+    
+    /**
+     * Создаёт и добавляем кнопки, определяющие действие с базой данных : импорт,
+     * экспорт или обновление данных
+     * @param OperateFrame.Operation operation тип операции с базой данных
+     * @param text текст, отображаемый на кнопке
+     */
+    private JButton addActionButton(OperateFrame.Operation operation, String text) {
+        JButton button = new JButton(text);
+        button.addActionListener(operationListener(operation));
+        return button;
     }
     
     private ActionListener openConnectPropertiesListener() {
@@ -169,11 +211,29 @@ public class StartFrame extends JFrame {
         ActionListener listener = (ActionEvent ae) -> {
             //To change body of generated methods, choose Tools | Templates.
             // отображаем на экране окно ввода параметров подключения
-        try {
-            mnuData.setEnabled(openConnection(null));
-        } catch (IOException | SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            try {
+                mnuData.setEnabled(openConnection(null));
+            } catch (IOException | SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        };
+        return listener;
+    }
+    
+    private ActionListener operationListener(OperateFrame.Operation operation) {
+        ActionListener listener = (ActionEvent ae) -> {
+            OperateFrame frame = new OperateFrame();// создаём форму для выбранной операции
+            frame.setIdOperation(operation);// задаём выбранный тип операции
+            frame.setConnection(connection);// передаём экземпляр соединения
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e); //To change body of generated methods, choose Tools | Templates.
+                    frame.setVisible(false);
+                }
+                
+            });
+            frame.setVisible(true);// отображаем на экране
         };
         return listener;
     }

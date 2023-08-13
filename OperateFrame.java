@@ -24,7 +24,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -33,18 +32,15 @@ import javax.swing.table.DefaultTableModel;
  */
 public class OperateFrame extends javax.swing.JFrame {
     private JDBCConnection connection;
-    private int idOperation;// идентификатор операций (импорт, экспорт, обновление)
     private ConnectOptions connOptions;
     private final String defaultTitle = "Admin Tools for database operations: ";
-    private admintools.DBOperation Operations;
-    
+    public enum Operation {Import, Export, Update};
+    private Operation idOperation;// идентификатор операций (импорт, экспорт, обновление)
     /**
      * Creates new form OperateFrame
      */
     public OperateFrame() {
         initComponents();
-        idOperation = 0;
-//        setFrameTitle();
     }
 
     /**
@@ -56,12 +52,8 @@ public class OperateFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jToolBar1 = new javax.swing.JToolBar();
-        btnOpenFile = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        lblNameLabel = new javax.swing.JLabel();
+        lblTargetLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lstTableName = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -74,59 +66,18 @@ public class OperateFrame extends javax.swing.JFrame {
         btnSendTo = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         txtStep = new javax.swing.JTextArea();
-        OperateProgressBar = new javax.swing.JProgressBar();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        mnuFile = new javax.swing.JMenu();
-        mnuFileConnection = new javax.swing.JMenu();
-        mnuConnectProperties = new javax.swing.JMenuItem();
-        mnuConnectParameters = new javax.swing.JMenuItem();
-        mnuFileOpen = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        mnuFileExit = new javax.swing.JMenuItem();
-        mnuData = new javax.swing.JMenu();
-        mnuDataImport = new javax.swing.JMenuItem();
-        mnuDataExport = new javax.swing.JMenuItem();
-        mnuDataUpdate = new javax.swing.JMenuItem();
+        jToolBar1 = new javax.swing.JToolBar();
+        openButton = new javax.swing.JButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentHidden(java.awt.event.ComponentEvent evt) {
-                formComponentHidden(evt);
-            }
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);
             }
         });
 
-        jLabel1.setText("jLabel1");
+        lblNameLabel.setText("jLabel1");
 
-        jToolBar1.setRollover(true);
-
-        btnOpenFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/OpenFile.png"))); // NOI18N
-        btnOpenFile.setToolTipText("открыть файл");
-        btnOpenFile.setFocusable(false);
-        btnOpenFile.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnOpenFile.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        btnOpenFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnOpenFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOpenFileActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(btnOpenFile);
-
-        jButton1.setText("jButton1");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton1);
-
-        jButton2.setText("jButton2");
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton2);
-
-        jLabel2.setText("jLabel2");
+        lblTargetLabel.setText("jLabel2");
 
         jScrollPane1.setViewportView(lstTableName);
 
@@ -168,161 +119,91 @@ public class OperateFrame extends javax.swing.JFrame {
         txtStep.setFocusable(false);
         jScrollPane4.setViewportView(txtStep);
 
-        OperateProgressBar.setStringPainted(true);
+        jToolBar1.setRollover(true);
 
-        mnuFile.setText("Файл");
-
-        mnuFileConnection.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/base.png"))); // NOI18N
-        mnuFileConnection.setText("Соединение");
-
-        mnuConnectProperties.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        mnuConnectProperties.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png"))); // NOI18N
-        mnuConnectProperties.setText("Выбрать файл свойств");
-        mnuConnectProperties.addActionListener(new java.awt.event.ActionListener() {
+        openButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/OpenFile.png"))); // NOI18N
+        openButton.setText("открыть");
+        openButton.setFocusable(false);
+        openButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        openButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuConnectPropertiesActionPerformed(evt);
+                openButtonActionPerformed(evt);
             }
         });
-        mnuFileConnection.add(mnuConnectProperties);
-
-        mnuConnectParameters.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        mnuConnectParameters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/info.png"))); // NOI18N
-        mnuConnectParameters.setText("Окно ввода параметров");
-        mnuConnectParameters.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuConnectParametersActionPerformed(evt);
-            }
-        });
-        mnuFileConnection.add(mnuConnectParameters);
-
-        mnuFile.add(mnuFileConnection);
-
-        mnuFileOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        mnuFileOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/OpenFile.png"))); // NOI18N
-        mnuFileOpen.setText("Открыть");
-        mnuFileOpen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuFileOpenActionPerformed(evt);
-            }
-        });
-        mnuFile.add(mnuFileOpen);
-        mnuFile.add(jSeparator1);
-
-        mnuFileExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/exit.png"))); // NOI18N
-        mnuFileExit.setText("Выход");
-        mnuFileExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuFileExitActionPerformed(evt);
-            }
-        });
-        mnuFile.add(mnuFileExit);
-
-        jMenuBar1.add(mnuFile);
-
-        mnuData.setText("Данные");
-        mnuData.setEnabled(false);
-
-        mnuDataImport.setText("Импорт");
-        mnuDataImport.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuDataImportActionPerformed(evt);
-            }
-        });
-        mnuData.add(mnuDataImport);
-
-        mnuDataExport.setText("Экспорт");
-        mnuDataExport.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuDataExportActionPerformed(evt);
-            }
-        });
-        mnuData.add(mnuDataExport);
-
-        mnuDataUpdate.setText("Обновление даннчх");
-        mnuDataUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuDataUpdateActionPerformed(evt);
-            }
-        });
-        mnuData.add(mnuDataUpdate);
-
-        jMenuBar1.add(mnuData);
-
-        setJMenuBar(jMenuBar1);
+        jToolBar1.add(openButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSendTo, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnPreviouse)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSendTo, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblNameLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnNext)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(OKButton))
-                    .addComponent(jScrollPane4)
-                    .addComponent(OperateProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(65, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTargetLabel)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnPreviouse)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnNext)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(OKButton))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addComponent(jScrollPane3)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(OperateProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(11, 11, 11)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnPreviouse)
-                            .addComponent(btnNext)
-                            .addComponent(OKButton)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel1))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(btnSendTo)
-                            .addGap(51, 51, 51))))
-                .addGap(8, 8, 8)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
+                        .addComponent(lblTargetLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(11, 11, 11)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnPreviouse)
+                                    .addComponent(btnNext)
+                                    .addComponent(OKButton)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnSendTo)
+                                .addGap(51, 51, 51))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblNameLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        OperateProgressBar.setValue(0);
-        
-        // задаём заголовок фрейма
-        setTitle(defaultTitle);
-        
-        // задаём значок для формы
+       
         URL url;
         url = OperateFrame.class.getClassLoader().getResource("image/base.png");
         setIconImage(new ImageIcon(url).getImage());
-        
+        setFrameTitle();
 //        setIdOperation();// задаём тип выполняемой опереции
         this.setLocationRelativeTo(null);// располагаем форму по середине экрана
 //        try {
@@ -332,18 +213,12 @@ public class OperateFrame extends javax.swing.JFrame {
 //        }
     }//GEN-LAST:event_formComponentShown
 
-    private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
-        // закрываем соединение с базой перед выходом
-        closeConnection();
-        System.exit(0);
-    }//GEN-LAST:event_formComponentHidden
-
-    private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
-        // отображаем окно выбора файла
+    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+        // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("."));
-        chooser.setMultiSelectionEnabled(false);// множественныый выбор запрещён
-        // фильтр файлов по формату
+        chooser.setMultiSelectionEnabled(false);// запрещаем множественный выбор
+        // задаём фильтр файлов
         FileFilter filter = new FileFilter() {
 
             @Override
@@ -355,15 +230,15 @@ public class OperateFrame extends javax.swing.JFrame {
 
             @Override
             public String getDescription() {
-                return "Текстовые файлы с разделителями (*.csv,*.txt)";
+                return "Файлы с разделителями, текстовые файлы (*.csv,*.txt)";
             }
         };
-        chooser.setFileFilter(filter);// устанавливаем фильтр для окна выбора файла
+        chooser.setFileFilter(filter);// устанавливаем фильтр
         int result = chooser.showOpenDialog(this);
         
-        // если пользователь выбрал файл, то отображаем его название в заголовке
+        // проверяем сделал ли выбор пользователь
         if(result == JFileChooser.APPROVE_OPTION){
-            // устанавливаем заголовок окна в ихсодное состояние
+            // если выбор сделан
 //            setFrameTitle();
             
             String name;
@@ -372,108 +247,28 @@ public class OperateFrame extends javax.swing.JFrame {
                 System.out.println("file - " + name);
                 
 //                setTitle(getTitle() + " : " + name);
-                // окно дополнительных параметров файла
-                OptionCSVDialog csvDialog = new OptionCSVDialog(this, true);
-                csvDialog.setLocationRelativeTo(this);// выводим окно в центре экрана
-                csvDialog.setHeader(false);
-                csvDialog.setVisible(true);
-                if(csvDialog.isOk()) {
-                    String separator = csvDialog.getSeparator();
-                    boolean header = csvDialog.isHeader();
-                    // проверем выбор пользователя
-                    CSVOperate csvReader = new CSVOperate(name, separator);
-                    csvReader.setHeader(header);// есть ли заголовки
-                    csvReader.readData();// считываем данные из файла
-                    Object[][] content = csvReader.getData();
-                    String[] columnName = csvReader.getColumnName();
-                    // получаем модель данных для таблицы
-                    DefaultTableModel model = new DefaultTableModel(content, 
-                            columnName);
+                // отображаем окно выбора разделителя и заголовков
+                OptionCSVDialog dialog = new OptionCSVDialog(this, true);
+                dialog.setLocationRelativeTo(this);
+                dialog.setVisible(true);
+                // проверяем сделал ли выбор пользователь
+                if(dialog.isOk()) {
+                    CSVOperate csvReader = new CSVOperate();
+                    csvReader.setFileName(name);
+                    csvReader.setHeader(dialog.isHeader());// заданы ли заголовки столбцов
+                    csvReader.setSeparator(dialog.getSeparator());
+                    csvReader.readData();
+
+                    // РїРѕР»СѓС‡Р°РµРј РјРѕРґРµР»СЊ РґР°РЅРЅС‹С… РґР»СЏ С‚Р°Р±Р»РёС†С‹
+                    DefaultTableModel model = new DefaultTableModel(csvReader.getData(), 
+                            csvReader.getColumnName());
                     jTable1.setModel(model);
-    //                btnNext.doClick();
-    //                btnNext.setEnabled(false);
-    //                Operations.addListItem();// 
                 }
             } catch (IOException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
         }
-    }//GEN-LAST:event_btnOpenFileActionPerformed
-
-    private void mnuFileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuFileExitActionPerformed
-        // TODO add your handling code here:
-        closeConnection();// закрываем соединение с базой
-        System.exit(0);// завершение работы
-    }//GEN-LAST:event_mnuFileExitActionPerformed
-
-    private void mnuDataImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataImportActionPerformed
-        // TODO add your handling code here:
-        idOperation = 0;
-        DBImportAction importAction = new DBImportAction(lstTableName, lstTargetList, txtStep, 
-                jLabel1, jLabel2, jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
-        setFrameTitle();
-        importAction.Start();// начало операции по импорту данных
-    }//GEN-LAST:event_mnuDataImportActionPerformed
-
-    private void mnuDataExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataExportActionPerformed
-        // TODO add your handling code here:
-        idOperation = 1;
-        DBExportAction exportAction = new DBExportAction(lstTableName, 
-                lstTargetList, txtStep, jLabel1, jLabel2, jTable1, connection, 
-                btnSendTo, btnNext, btnPreviouse, OKButton);
-        setFrameTitle();
-        exportAction.Start();
-//        dbOperate.moveNext();
-    }//GEN-LAST:event_mnuDataExportActionPerformed
-
-    private void mnuDataUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuDataUpdateActionPerformed
-        // TODO add your handling code here:
-        idOperation = 2;
-        setFrameTitle();
-        DBUpdateAction updateAction = new DBUpdateAction(lstTableName, 
-                lstTargetList, txtStep, jLabel1, jLabel2, jTable1, connection, 
-                btnSendTo, btnNext, btnPreviouse, OKButton);
-        updateAction.Start();// начало операции по обновлению данных
-//        dbOperate.moveNext();
-    }//GEN-LAST:event_mnuDataUpdateActionPerformed
-
-    /**
-     * Открываем соединение с помощью выбранного файла свойств
-     * @param evt 
-     */
-    private void mnuConnectPropertiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuConnectPropertiesActionPerformed
-        // отображаем диалоговое окно выбора файла
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, .properties", "properties"));
-        chooser.showDialog(this, "Открыть файл свойств подключения");
-        File f = chooser.getSelectedFile();// выбранный пользователем файл
-        if(chooser.accept(f)){
-            // если пользователь выбрал файл, то печатаем его имя
-            System.out.println(chooser.getName(f));
-            try {
-                mnuData.setEnabled(openConnection(f));
-            } catch (IOException | SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-        }
-            
-    }//GEN-LAST:event_mnuConnectPropertiesActionPerformed
-
-    private void mnuConnectParametersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuConnectParametersActionPerformed
-        // отображаем на экране окно ввода параметров подключения
-        try {
-            mnuData.setEnabled(openConnection(null));
-        } catch (IOException | SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_mnuConnectParametersActionPerformed
-
-    private void mnuFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuFileOpenActionPerformed
-        // TODO add your handling code here:
-        btnOpenFile.doClick();
-    }//GEN-LAST:event_mnuFileOpenActionPerformed
+    }//GEN-LAST:event_openButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -516,35 +311,20 @@ public class OperateFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton OKButton;
-    private javax.swing.JProgressBar OperateProgressBar;
     private javax.swing.JButton btnNext;
-    private javax.swing.JButton btnOpenFile;
     private javax.swing.JButton btnPreviouse;
     private javax.swing.JButton btnSendTo;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lblNameLabel;
+    private javax.swing.JLabel lblTargetLabel;
     private javax.swing.JList lstTableName;
     private javax.swing.JList lstTargetList;
-    private javax.swing.JMenuItem mnuConnectParameters;
-    private javax.swing.JMenuItem mnuConnectProperties;
-    private javax.swing.JMenu mnuData;
-    private javax.swing.JMenuItem mnuDataExport;
-    private javax.swing.JMenuItem mnuDataImport;
-    private javax.swing.JMenuItem mnuDataUpdate;
-    private javax.swing.JMenu mnuFile;
-    private javax.swing.JMenu mnuFileConnection;
-    private javax.swing.JMenuItem mnuFileExit;
-    private javax.swing.JMenuItem mnuFileOpen;
+    private javax.swing.JButton openButton;
     private javax.swing.JTextArea txtStep;
     // End of variables declaration//GEN-END:variables
 
@@ -558,17 +338,29 @@ public class OperateFrame extends javax.swing.JFrame {
     /**
      * @param idOperation the idOperation to set
      */
-    private void setIdOperation() {
+    private void setOperation() {
         // название кнопки
         switch (idOperation) {
-            case 0:
+            case Import:
                 OKButton.setText("Импорт");
+                DBImportAction importAction = new DBImportAction(lstTableName, 
+                        lstTargetList, txtStep, lblNameLabel, lblTargetLabel, 
+                        jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
+                importAction.Start();
                 break;
-            case 1:
+            case Export:
                 OKButton.setText("Экспорт");
+                DBExportAction exportAction = new DBExportAction(lstTableName, 
+                        lstTargetList, txtStep, lblNameLabel, lblTargetLabel, 
+                        jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
+                exportAction.Start();
                 break;
             default:
                 OKButton.setText("Обновить данные");
+                DBUpdateAction updateAction = new DBUpdateAction(lstTableName, 
+                        lstTargetList, txtStep, lblNameLabel, lblTargetLabel, 
+                        jTable1, connection, btnSendTo, btnNext, btnPreviouse, OKButton);
+                updateAction.Start();
                 break;
         }
         OKButton.setEnabled(false);// делаем её недоступной
@@ -580,10 +372,10 @@ public class OperateFrame extends javax.swing.JFrame {
     private void setFrameTitle(){
         String title;
         switch (idOperation) {
-            case 0:
+            case Import:
                 title = defaultTitle + "Импорт данных";
                 break;
-            case 1:
+            case Export:
                 title = defaultTitle + "Экспорт данных";
                 break;
             default:
@@ -591,7 +383,7 @@ public class OperateFrame extends javax.swing.JFrame {
                 break;
         }
         setTitle(title);
-        setIdOperation();
+        setOperation();
     }
     
      
@@ -801,9 +593,9 @@ public class OperateFrame extends javax.swing.JFrame {
                     connOptions.getDatabaseName();
 
                 // открываем первоначальное соединение с базой данных
-                connection = new JDBCConnection(driver, url, connOptions.getUsername(),
-                        connOptions.getPassword());
-                if (connection.isClosedConn() != true){
+                setConnection(new JDBCConnection(driver, url, connOptions.getUsername(),
+                        connOptions.getPassword()));
+                if (getConnection().isClosedConn() != true){
                     message = "Connection is opening!";
                     retval = true;
                 } else{
@@ -825,10 +617,10 @@ public class OperateFrame extends javax.swing.JFrame {
     
     private void closeConnection(){
         try {
-            if (connection != null && !connection.isClosedConn()) {
+            if (getConnection() != null && !connection.isClosedConn()) {
             JDBCConnection.getConn().close();
-            if(connection.isClosedConn()){
-                connection = null;
+            if( getConnection().isClosedConn()){
+                    setConnection(null);
                 
             }
             }
@@ -848,20 +640,32 @@ public class OperateFrame extends javax.swing.JFrame {
         idialog.setType(type);
         idialog.setVisible(true);
     }
-    
-    private class MyTableModelImpl extends MyTableModel {
-        
-        public MyTableModelImpl(ResultSet resultset) throws SQLException {
-            super(resultset);
-        }
 
-        public MyTableModelImpl(Object[][] content, String[] columnName, Class[] columnClass) {
-            super(content, columnName, columnClass);
-        }
+    /**
+     * @return the idOperation
+     */
+    public Operation getIdOperation() {
+        return idOperation;
+    }
 
-        public MyTableModelImpl(Object[][] content) {
-            super(content);
-        }
-        
+    /**
+     * @param idOperation the idOperation to set
+     */
+    public void setIdOperation(Operation idOperation) {
+        this.idOperation = idOperation;
+    }
+
+    /**
+     * @return the connection
+     */
+    public JDBCConnection getConnection() {
+        return connection;
+    }
+
+    /**
+     * @param connection the connection to set
+     */
+    public void setConnection(JDBCConnection connection) {
+        this.connection = connection;
     }
 }
