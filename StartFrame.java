@@ -23,12 +23,16 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -42,12 +46,13 @@ public class StartFrame extends JFrame {
 
     private JDBCConnection connection;
     private ConnectOptions connOptions;
+    private StatusBar statusBar;
     
     public StartFrame() throws HeadlessException {
         super("Admin tools");
 //        setTitle("Admin tools");// заголовок формы
         // добавляем слушателей открытия и закрытия формы
-        addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent we) {
                 super.windowOpened(we); //To change body of generated methods, choose Tools | Templates.
@@ -81,7 +86,9 @@ public class StartFrame extends JFrame {
 //        createMenuData();
 //        bar.add(mnuData);
 //        setJMenuBar(bar);
-        this.getContentPane().add(mainPanel());
+        this.getContentPane().add(mainPanel(), BorderLayout.CENTER);
+        statusBar = new StatusBar();
+        this.getContentPane().add(statusBar, BorderLayout.SOUTH);
 //        setSize(300, 200);
         pack();
     }
@@ -159,11 +166,11 @@ public class StartFrame extends JFrame {
         actionBox.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2, true), "Действие"));
         actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем на него кнопки действия
-        actionBox.add(addActionButton(OperateFrame.OperationType.Import, "Импорт"));
+        actionBox.add(addActionButton(OperateFrame.Operation.Import, "Импорт"));
         actionBox.add(Box.createHorizontalStrut(5));
-        actionBox.add(addActionButton(OperateFrame.OperationType.Export, "Экспорт"));
+        actionBox.add(addActionButton(OperateFrame.Operation.Export, "Экспорт"));
         actionBox.add(Box.createHorizontalStrut(5));
-        actionBox.add(addActionButton(OperateFrame.OperationType.Update, "Обновление"));
+        actionBox.add(addActionButton(OperateFrame.Operation.Update, "Обновление"));
         actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем кнопку Выход
         JButton exitButton = new JButton("Выход", 
@@ -193,7 +200,7 @@ public class StartFrame extends JFrame {
      * @param OperateFrame.Operation operation тип операции с базой данных
      * @param text текст, отображаемый на кнопке
      */
-    private JButton addActionButton(OperateFrame.OperationType operation, String text) {
+    private JButton addActionButton(OperateFrame.Operation operation, String text) {
         JButton button = new JButton(text);
         button.addActionListener(operationListener(operation));
         return button;
@@ -234,7 +241,7 @@ public class StartFrame extends JFrame {
         return listener;
     }
     
-    private ActionListener operationListener(OperateFrame.OperationType operation) {
+    private ActionListener operationListener(OperateFrame.Operation operation) {
         ActionListener listener = (ActionEvent ae) -> {
             // проверяем наличие установленного соединения
             if(connection == null) return;
@@ -510,6 +517,20 @@ public class StartFrame extends JFrame {
     
     private class StatusBar extends JPanel {
 
+        private JPanel mainPanel;// главная панель
+        private String databaseName;// имя базы данных
+        private String connectStatus;// статус подключения к базе данных
+        private String userName;// имя подключившегося пользователя
+        private JLabel lblDatabaseName;// метка для вывода имени базы данных
+        private JLabel lblStatus;// метка для вывода состояния соединения
+        private JLabel lblUserName;// метка для вывода имени пользователя
+
+        public StatusBar() {
+            super();
+            super.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+            initComponents();// создаём GUI
+        }
+        
         /**
          * @return the databaseName
          */
@@ -551,14 +572,26 @@ public class StartFrame extends JFrame {
         public void setUserName(String userName) {
             this.userName = userName;
         }
-        private JPanel mainPanel;// главная панель
-        private String databaseName;// имя базы данных
-        private String connectStatus;// статус подключения к базе данных
-        private String userName;// имя подключившегося пользователя
-
-        public StatusBar() {
-            super();
-        }
         
+        /**
+         * инициализация компонентов GUI
+         */
+        private void initComponents() {
+            // создаём метки
+            lblDatabaseName = new JLabel(new ImageIcon(getClass().getResource("/image/base_off.png")), 
+                    SwingConstants.LEFT);
+            lblDatabaseName.setToolTipText("имя базы данных");
+            lblDatabaseName.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+            lblStatus = new JLabel();
+            lblStatus.setToolTipText("состояние подключения");
+            lblUserName = new JLabel(new ImageIcon(getClass().getResource("/image/users.png")), 
+                    SwingConstants.LEFT);
+            lblUserName.setToolTipText("имя пользователя");
+            lblUserName.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+            add(lblDatabaseName);
+            add(lblStatus);
+            add(lblUserName);
+            
+        }
     }
 }
