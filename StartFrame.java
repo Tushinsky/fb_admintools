@@ -17,18 +17,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -43,7 +42,6 @@ public class StartFrame extends JFrame {
 
     private JDBCConnection connection;
     private ConnectOptions connOptions;
-    private JMenu mnuData;// меню Данные, содержащее меню выбора операций с базой данных
     
     public StartFrame() throws HeadlessException {
         super("Admin tools");
@@ -53,9 +51,15 @@ public class StartFrame extends JFrame {
             @Override
             public void windowOpened(WindowEvent we) {
                 super.windowOpened(we); //To change body of generated methods, choose Tools | Templates.
+                // задаём иконку для фрейма
+                URL url = getClass().getResource("/image/base.png");
+                ImageIcon image = new ImageIcon(url);
+                setIconImage(image.getImage());
+                
                 initComponents();// инициализация компонентов формы
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setLocationRelativeTo(null);
+                setResizable(false);
             }
 
             @Override
@@ -72,11 +76,11 @@ public class StartFrame extends JFrame {
      * Создание и инициализация компонентов пользовательского интерфейса
      */
     private void initComponents() {
-        JMenuBar bar = new JMenuBar();// создаём панель главного меню
-        bar.add(fileMenu());
-        createMenuData();
-        bar.add(mnuData);
-        setJMenuBar(bar);
+//        JMenuBar bar = new JMenuBar();// создаём панель главного меню
+//        bar.add(fileMenu());
+//        createMenuData();
+//        bar.add(mnuData);
+//        setJMenuBar(bar);
         this.getContentPane().add(mainPanel());
 //        setSize(300, 200);
         pack();
@@ -86,42 +90,44 @@ public class StartFrame extends JFrame {
      * Создаёт главное меню Файл
      * @return созданное меню Файл
      */
-    private JMenu fileMenu() {
-        JMenu menu = new JMenu("Файл");// меню Файл
-        JMenu mnuConnection = new JMenu("Соединение");
-        mnuConnection.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/base.png")));
-        JMenuItem mnuConnectProperties = new JMenuItem("Открыть файл свойств");
-        mnuConnectProperties.addActionListener(openConnectPropertiesListener());
-        mnuConnectProperties.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        mnuConnectProperties.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png"))); // NOI18N
-        JMenuItem mnuConnectParameters = new JMenuItem("Открыть окно параметров");
-        mnuConnectParameters.addActionListener(openConnectParametersListener());
-        mnuConnectParameters.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        mnuConnectParameters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/info.png"))); // NOI18N
-        // заполняем меню соединения
-        mnuConnection.add(mnuConnectParameters);
-        mnuConnection.add(mnuConnectProperties);
-        
-        JMenuItem mnuFileExit = new JMenuItem("Выход");// меню Выход
-        mnuFileExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/exit.png"))); // NOI18N
-        mnuFileExit.addActionListener((ActionEvent ae) -> {
-            //To change body of generated methods, choose Tools | Templates.
-            closeConnection();// закрываем соединение с базой
-            System.exit(0);// завершение работы
-        });
-        // заполняем меню Файл
-        menu.add(mnuConnection);
-        menu.add(mnuFileExit);
-        return menu;
-    }
-    
-    /**
-     * Создаёт меню Данные, содержащее пункты меню для выбора действий с базой данных
-     */
-    private void createMenuData() {
-        mnuData = new JMenu("Данные");
-        
-    }
+//    private JMenu fileMenu() {
+//        JMenu menu = new JMenu("Файл");// меню Файл
+//        JMenu mnuConnection = new JMenu("Соединение");
+//        mnuConnection.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/base.png")));
+//        JMenuItem mnuConnectProperties = new JMenuItem("Открыть файл свойств");
+//        mnuConnectProperties.addActionListener(openConnectPropertiesListener());
+//        mnuConnectProperties.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, 
+//                java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+//        mnuConnectProperties.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png"))); // NOI18N
+//        JMenuItem mnuConnectParameters = new JMenuItem("Открыть окно параметров");
+//        mnuConnectParameters.addActionListener(openConnectParametersListener());
+//        mnuConnectParameters.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, 
+//                java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+//        mnuConnectParameters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/info.png"))); // NOI18N
+//        // заполняем меню соединения
+//        mnuConnection.add(mnuConnectParameters);
+//        mnuConnection.add(mnuConnectProperties);
+//        
+//        JMenuItem mnuFileExit = new JMenuItem("Выход");// меню Выход
+//        mnuFileExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/exit.png"))); // NOI18N
+//        mnuFileExit.addActionListener((ActionEvent ae) -> {
+//            //To change body of generated methods, choose Tools | Templates.
+//            closeConnection();// закрываем соединение с базой
+//            System.exit(0);// завершение работы
+//        });
+//        // заполняем меню Файл
+//        menu.add(mnuConnection);
+//        menu.add(mnuFileExit);
+//        return menu;
+//    }
+//    
+//    /**
+//     * Создаёт меню Данные, содержащее пункты меню для выбора действий с базой данных
+//     */
+//    private void createMenuData() {
+//        mnuData = new JMenu("Данные");
+//        
+//    }
     
     /**
      * Создаёт главную панель - контейнер, на которой располагаются все остальные элементы
@@ -132,14 +138,17 @@ public class StartFrame extends JFrame {
         // создаём панель, на которой будут располагаться остальные элементы
         JPanel mainpanel = new JPanel(new BorderLayout(5, 5));
         Box connectBox = Box.createHorizontalBox();// контейнер для кнопок открытия соединения
+        connectBox.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2, true), "Соединение"));
         Box actionBox = Box.createHorizontalBox();// контейнер для кнопок действий с безой данных
         // создаём кнопки открытия соединения
         JButton propertyButton = new JButton("Открыть файл свойств", 
                 new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png")));
         propertyButton.addActionListener(openConnectPropertiesListener());
+//        propertyButton.setMnemonic('т');// задаём быстрый символ
         JButton paramButton = new JButton("Открыть окно параметров", 
                 new javax.swing.ImageIcon(getClass().getResource("/image/info.png")));
         paramButton.addActionListener(openConnectParametersListener());
+//        paramButton.setMnemonic('р');// задаём быстрый символ
         // добавляем их в контейнер
         connectBox.add(Box.createHorizontalStrut(5));
         connectBox.add(propertyButton);
@@ -147,13 +156,15 @@ public class StartFrame extends JFrame {
         connectBox.add(paramButton);
         connectBox.add(Box.createHorizontalStrut(5));
         // задаём для контейнера с кнопками действия границу с заголовком
-        actionBox.setBorder(new TitledBorder(new LineBorder(Color.yellow), "Действие"));
+        actionBox.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2, true), "Действие"));
+        actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем на него кнопки действия
-        actionBox.add(addActionButton(OperateFrame.Operation.Import, "Импорт"));
+        actionBox.add(addActionButton(OperateFrame.OperationType.Import, "Импорт"));
         actionBox.add(Box.createHorizontalStrut(5));
-        actionBox.add(addActionButton(OperateFrame.Operation.Export, "Экспорт"));
+        actionBox.add(addActionButton(OperateFrame.OperationType.Export, "Экспорт"));
         actionBox.add(Box.createHorizontalStrut(5));
-        actionBox.add(addActionButton(OperateFrame.Operation.Update, "Обновление"));
+        actionBox.add(addActionButton(OperateFrame.OperationType.Update, "Обновление"));
+        actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем кнопку Выход
         JButton exitButton = new JButton("Выход", 
                 new javax.swing.ImageIcon(getClass().getResource("/image/exit.png")));
@@ -165,11 +176,14 @@ public class StartFrame extends JFrame {
         exitBox.add(Box.createHorizontalGlue());
         exitBox.add(exitButton);
         exitBox.add(Box.createHorizontalGlue());
-        
+        Box box = Box.createVerticalBox();
+        box.add(Box.createVerticalStrut(5));
+        box.add(exitBox);
+        box.add(Box.createVerticalStrut(5));
         // добавляем контейнеры на главную панель
         mainpanel.add(connectBox, BorderLayout.NORTH);
         mainpanel.add(actionBox, BorderLayout.CENTER);
-        mainpanel.add(exitBox, BorderLayout.SOUTH);
+        mainpanel.add(box, BorderLayout.SOUTH);
         return mainpanel;
     }
     
@@ -179,7 +193,7 @@ public class StartFrame extends JFrame {
      * @param OperateFrame.Operation operation тип операции с базой данных
      * @param text текст, отображаемый на кнопке
      */
-    private JButton addActionButton(OperateFrame.Operation operation, String text) {
+    private JButton addActionButton(OperateFrame.OperationType operation, String text) {
         JButton button = new JButton(text);
         button.addActionListener(operationListener(operation));
         return button;
@@ -191,13 +205,13 @@ public class StartFrame extends JFrame {
             // отображаем диалоговое окно выбора файла
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, (.properties)", "properties"));
-        chooser.showDialog(this, "Открыть файл свойств подключения");
+        chooser.showDialog(this, "Открыть");
         File f = chooser.getSelectedFile();// выбранный пользователем файл
         if(chooser.accept(f)){
             // если пользователь выбрал файл, то печатаем его имя
             System.out.println(chooser.getName(f));
             try {
-                mnuData.setEnabled(openConnection(f));
+                openConnection(f);
             } catch (IOException | SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -212,7 +226,7 @@ public class StartFrame extends JFrame {
             //To change body of generated methods, choose Tools | Templates.
             // отображаем на экране окно ввода параметров подключения
             try {
-                mnuData.setEnabled(openConnection(null));
+                openConnection(null);
             } catch (IOException | SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -220,8 +234,10 @@ public class StartFrame extends JFrame {
         return listener;
     }
     
-    private ActionListener operationListener(OperateFrame.Operation operation) {
+    private ActionListener operationListener(OperateFrame.OperationType operation) {
         ActionListener listener = (ActionEvent ae) -> {
+            // проверяем наличие установленного соединения
+            if(connection == null) return;
             OperateFrame frame = new OperateFrame();// создаём форму для выбранной операции
             frame.setIdOperation(operation);// задаём выбранный тип операции
             frame.setConnection(connection);// передаём экземпляр соединения
@@ -492,5 +508,57 @@ public class StartFrame extends JFrame {
         idialog.setVisible(true);
     }
     
-    
+    private class StatusBar extends JPanel {
+
+        /**
+         * @return the databaseName
+         */
+        public String getDatabaseName() {
+            return databaseName;
+        }
+
+        /**
+         * @param databaseName the databaseName to set
+         */
+        public void setDatabaseName(String databaseName) {
+            this.databaseName = databaseName;
+        }
+
+        /**
+         * @return the connectStatus
+         */
+        public String getConnectStatus() {
+            return connectStatus;
+        }
+
+        /**
+         * @param connectStatus the connectStatus to set
+         */
+        public void setConnectStatus(String connectStatus) {
+            this.connectStatus = connectStatus;
+        }
+
+        /**
+         * @return the userName
+         */
+        public String getUserName() {
+            return userName;
+        }
+
+        /**
+         * @param userName the userName to set
+         */
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+        private JPanel mainPanel;// главная панель
+        private String databaseName;// имя базы данных
+        private String connectStatus;// статус подключения к базе данных
+        private String userName;// имя подключившегося пользователя
+
+        public StatusBar() {
+            super();
+        }
+        
+    }
 }

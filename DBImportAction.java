@@ -185,7 +185,7 @@ public class DBImportAction extends DBOperation {
                 }
             retval = retval + count;
             // определяем процент выполнения
-            int percent = (int)(retval * 100) / rowCount;
+//            int percent = (int)(retval * 100) / rowCount;
         }
         // проверяем наличие сообщений в массиве ошибок
         if(error.isEmpty()){

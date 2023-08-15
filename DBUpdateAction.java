@@ -158,8 +158,10 @@ public class DBUpdateAction extends DBOperation{
                 break;
             case 5:
                 // обновление данных, подсчёт количества ошибок, извещение пользователя
-                int update = updateDataDB();
                 String text = super.getTxtStep().getText() + "\n\r";
+                super.getTxtStep().setText(text + "Ожидайте, выполняется обновление данных...");
+                int update = updateDataDB();
+                text = super.getTxtStep().getText() + "\n\r";
                 super.getTxtStep().setText( text + "Обновлены данные в количестве " + update);
                 break;
 
@@ -241,7 +243,7 @@ public class DBUpdateAction extends DBOperation{
             }
             retval = retval + count;
             // определяем процент выполнения
-            int percent = (int)(retval * 100) / rowCount;
+//            int percent = (int)(retval * 100) / rowCount;
         }
         // проверяем наличие сообщений в массиве ошибок
         if(error.isEmpty()){
