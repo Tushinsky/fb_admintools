@@ -109,9 +109,14 @@ public class DBExportAction extends DBOperation {
             case 3:
                 String filename = getFileName();
                 if(filename != null) {
+                    
                     System.out.println("filename" + filename);
-                    int count = exportDataFromDB(filename);
                     String text = super.getTxtStep().getText() + "\n\r";
+                    super.getTxtStep().setText( text + "Ожидайте, выполняется экспорт данных...");
+                    System.out.println("start time = " + System.nanoTime());
+                    int count = exportDataFromDB(filename);
+                    System.out.println("finished time = " + System.nanoTime());
+                    text = super.getTxtStep().getText() + "\n\r";
                     super.getTxtStep().setText(text + "Выполнен экспорт данных в количестве " + count);
                 }
                 break;
