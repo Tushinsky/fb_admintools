@@ -166,11 +166,11 @@ public class StartFrame extends JFrame {
         actionBox.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2, true), "Действие"));
         actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем на него кнопки действия
-        actionBox.add(addActionButton(OperateFrame.Operation.Import, "Импорт"));
+        actionBox.add(addActionButton(OperateFrame.OperationType.Import, "Импорт"));
         actionBox.add(Box.createHorizontalStrut(5));
-        actionBox.add(addActionButton(OperateFrame.Operation.Export, "Экспорт"));
+        actionBox.add(addActionButton(OperateFrame.OperationType.Export, "Экспорт"));
         actionBox.add(Box.createHorizontalStrut(5));
-        actionBox.add(addActionButton(OperateFrame.Operation.Update, "Обновление"));
+        actionBox.add(addActionButton(OperateFrame.OperationType.Update, "Обновление"));
         actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем кнопку Выход
         JButton exitButton = new JButton("Выход", 
@@ -200,7 +200,7 @@ public class StartFrame extends JFrame {
      * @param OperateFrame.Operation operation тип операции с базой данных
      * @param text текст, отображаемый на кнопке
      */
-    private JButton addActionButton(OperateFrame.Operation operation, String text) {
+    private JButton addActionButton(OperateFrame.OperationType operation, String text) {
         JButton button = new JButton(text);
         button.addActionListener(operationListener(operation));
         return button;
@@ -218,7 +218,11 @@ public class StartFrame extends JFrame {
             // если пользователь выбрал файл, то печатаем его имя
             System.out.println(chooser.getName(f));
             try {
-                openConnection(f);
+                if(openConnection(f)) {
+                    statusBar.setDatabaseName(connOptions.getDatabaseName());
+                    statusBar.setConnectStatus("Подключено");
+                    statusBar.setUserName(connOptions.getUsername());
+                }
             } catch (IOException | SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -233,7 +237,11 @@ public class StartFrame extends JFrame {
             //To change body of generated methods, choose Tools | Templates.
             // отображаем на экране окно ввода параметров подключения
             try {
-                openConnection(null);
+                if(openConnection(null)) {
+                    statusBar.setDatabaseName(connOptions.getDatabaseName());
+                    statusBar.setConnectStatus("Подключено");
+                    statusBar.setUserName(connOptions.getUsername());
+                }
             } catch (IOException | SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -241,7 +249,7 @@ public class StartFrame extends JFrame {
         return listener;
     }
     
-    private ActionListener operationListener(OperateFrame.Operation operation) {
+    private ActionListener operationListener(OperateFrame.OperationType operation) {
         ActionListener listener = (ActionEvent ae) -> {
             // проверяем наличие установленного соединения
             if(connection == null) return;
@@ -517,7 +525,6 @@ public class StartFrame extends JFrame {
     
     private class StatusBar extends JPanel {
 
-        private JPanel mainPanel;// главная панель
         private String databaseName;// имя базы данных
         private String connectStatus;// статус подключения к базе данных
         private String userName;// имя подключившегося пользователя
@@ -526,8 +533,8 @@ public class StartFrame extends JFrame {
         private JLabel lblUserName;// метка для вывода имени пользователя
 
         public StatusBar() {
-            super();
-            super.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+            super(new BorderLayout(5, 1));
+            super.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
             initComponents();// создаём GUI
         }
         
@@ -543,6 +550,8 @@ public class StartFrame extends JFrame {
          */
         public void setDatabaseName(String databaseName) {
             this.databaseName = databaseName;
+            lblDatabaseName.setText(databaseName);
+            lblDatabaseName.setIcon(new ImageIcon(getClass().getResource("/image/base.png")));
         }
 
         /**
@@ -557,6 +566,7 @@ public class StartFrame extends JFrame {
          */
         public void setConnectStatus(String connectStatus) {
             this.connectStatus = connectStatus;
+            lblStatus.setText(connectStatus);
         }
 
         /**
@@ -571,6 +581,7 @@ public class StartFrame extends JFrame {
          */
         public void setUserName(String userName) {
             this.userName = userName;
+            lblUserName.setText(userName);
         }
         
         /**
@@ -578,19 +589,27 @@ public class StartFrame extends JFrame {
          */
         private void initComponents() {
             // создаём метки
-            lblDatabaseName = new JLabel(new ImageIcon(getClass().getResource("/image/base_off.png")), 
+            lblDatabaseName = new JLabel("databasename", 
+                    new ImageIcon(getClass().getResource("/image/base_off.png")), 
                     SwingConstants.LEFT);
             lblDatabaseName.setToolTipText("имя базы данных");
             lblDatabaseName.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-            lblStatus = new JLabel();
+            lblStatus = new JLabel("Status");
             lblStatus.setToolTipText("состояние подключения");
-            lblUserName = new JLabel(new ImageIcon(getClass().getResource("/image/users.png")), 
+            lblUserName = new JLabel("UserName", 
+                    new ImageIcon(getClass().getResource("/image/users.png")), 
                     SwingConstants.LEFT);
             lblUserName.setToolTipText("имя пользователя");
-            lblUserName.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-            add(lblDatabaseName);
-            add(lblStatus);
-            add(lblUserName);
+            lblUserName.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+            Box baseBox = Box.createHorizontalBox();
+            baseBox.add(lblDatabaseName);
+            baseBox.add(Box.createHorizontalStrut(5));
+            baseBox.add(lblStatus);
+            Box userBox = Box.createHorizontalBox();
+            userBox.add(lblUserName);
+            userBox.add(Box.createHorizontalStrut(5));
+            add(baseBox, BorderLayout.CENTER);
+            add(userBox, BorderLayout.EAST);
             
         }
     }
