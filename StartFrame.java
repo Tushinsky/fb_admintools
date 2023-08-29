@@ -47,6 +47,7 @@ public class StartFrame extends JFrame {
     private JDBCConnection connection;
     private ConnectOptions connOptions;
     private StatusBar statusBar;
+    private StatusBarPane statusPane;
     
     public StartFrame() throws HeadlessException {
         super("Admin tools");
@@ -70,8 +71,7 @@ public class StartFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent we) {
                 super.windowClosing(we); //To change body of generated methods, choose Tools | Templates.
-                closeConnection();// закрываем соединение с базой
-                System.exit(0);// завершение работы
+                Exit();// завершение работы
             }
             
         });
@@ -88,7 +88,22 @@ public class StartFrame extends JFrame {
 //        setJMenuBar(bar);
         this.getContentPane().add(mainPanel(), BorderLayout.CENTER);
         statusBar = new StatusBar();
-        this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+        statusPane = new StatusBarPane();
+        statusPane.addItemPane("base");
+        StatusBarPane.ItemPane basePane = statusPane.getItemPane("base");
+        basePane.setText("databasename");
+        basePane.setIcon(new ImageIcon("src/image/base_off.png"));
+        basePane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        statusPane.createSeparator(5);
+        statusPane.addItemPane("status");
+        statusPane.getItemPane("status").setText("status");
+        statusPane.createSeparator(5);
+        statusPane.addItemPane("user");
+        StatusBarPane.ItemPane userPane = statusPane.getItemPane("user");
+        userPane.setText("username");
+        userPane.setIcon(new ImageIcon("src/image/users.png"));
+        userPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        this.getContentPane().add(statusPane, BorderLayout.SOUTH);
 //        setSize(300, 200);
         pack();
     }
@@ -149,11 +164,11 @@ public class StartFrame extends JFrame {
         Box actionBox = Box.createHorizontalBox();// контейнер для кнопок действий с безой данных
         // создаём кнопки открытия соединения
         JButton propertyButton = new JButton("Открыть файл свойств", 
-                new javax.swing.ImageIcon(getClass().getResource("/image/CommentHS.png")));
+                new javax.swing.ImageIcon("src/image/CommentHS.png"));
         propertyButton.addActionListener(openConnectPropertiesListener());
 //        propertyButton.setMnemonic('т');// задаём быстрый символ
         JButton paramButton = new JButton("Открыть окно параметров", 
-                new javax.swing.ImageIcon(getClass().getResource("/image/info.png")));
+                new javax.swing.ImageIcon("src/image/info.png"));
         paramButton.addActionListener(openConnectParametersListener());
 //        paramButton.setMnemonic('р');// задаём быстрый символ
         // добавляем их в контейнер
@@ -174,10 +189,9 @@ public class StartFrame extends JFrame {
         actionBox.add(Box.createHorizontalGlue());// добавляем склейку
         // добавляем кнопку Выход
         JButton exitButton = new JButton("Выход", 
-                new javax.swing.ImageIcon(getClass().getResource("/image/exit.png")));
+                new javax.swing.ImageIcon("src/image/exit.png"));
         exitButton.addActionListener((ActionEvent ae) -> {
-            closeConnection();// закрываем соединение с базой
-            System.exit(0);// завершение работы
+            Exit();// завершение работы
         });
         Box exitBox = Box.createHorizontalBox();
         exitBox.add(Box.createHorizontalGlue());
@@ -211,7 +225,8 @@ public class StartFrame extends JFrame {
             //To change body of generated methods, choose Tools | Templates.
             // отображаем диалоговое окно выбора файла
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, (.properties)", "properties"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Файлы свойств, (.properties)", 
+                "properties"));
         chooser.showDialog(this, "Открыть");
         File f = chooser.getSelectedFile();// выбранный пользователем файл
         if(chooser.accept(f)){
@@ -219,9 +234,11 @@ public class StartFrame extends JFrame {
             System.out.println(chooser.getName(f));
             try {
                 if(openConnection(f)) {
-                    statusBar.setDatabaseName(connOptions.getDatabaseName());
-                    statusBar.setConnectStatus("Подключено");
-                    statusBar.setUserName(connOptions.getUsername());
+                    setStatus();
+//                    statusPane.removeItemPane("base");
+//                    statusBar.setDatabaseName(connOptions.getDatabaseName());
+//                    statusBar.setConnectStatus("Подключено");
+//                    statusBar.setUserName(connOptions.getUsername());
                 }
             } catch (IOException | SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -238,9 +255,10 @@ public class StartFrame extends JFrame {
             // отображаем на экране окно ввода параметров подключения
             try {
                 if(openConnection(null)) {
-                    statusBar.setDatabaseName(connOptions.getDatabaseName());
-                    statusBar.setConnectStatus("Подключено");
-                    statusBar.setUserName(connOptions.getUsername());
+                    setStatus();
+//                    statusBar.setDatabaseName(connOptions.getDatabaseName());
+//                    statusBar.setConnectStatus("Подключено");
+//                    statusBar.setUserName(connOptions.getUsername());
                 }
             } catch (IOException | SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(OperateFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -267,6 +285,21 @@ public class StartFrame extends JFrame {
             frame.setVisible(true);// отображаем на экране
         };
         return listener;
+    }
+    
+    /**
+     * Завершение работы приложения
+     */
+    private void Exit() {
+        closeConnection();// закрываем соединение с базой
+        System.exit(0);// завершение работы
+    }
+    
+    private void setStatus() {
+         statusPane.getItemPane("base").setText(connOptions.getDatabaseName());
+        statusPane.getItemPane("base").setIcon(new ImageIcon("src/image/base.png"));
+        statusPane.getItemPane("status").setText("Подключено");
+        statusPane.getItemPane("user").setText(connOptions.getUsername());
     }
     
     private class ConnectOptions{
@@ -437,7 +470,7 @@ public class StartFrame extends JFrame {
                 Enumeration e = props.propertyNames();
                 while(e.hasMoreElements()) {
                     String propName = e.nextElement().toString();// получаем имя свойства
-                    System.out.println(propName.toLowerCase() + "=" + props.getProperty(propName));
+//                    System.out.println(propName.toLowerCase() + "=" + props.getProperty(propName));
                     // проверяем, что содержится в имени свойства
                     if(propName.toLowerCase().contains("database")) {
                         databaseName = props.getProperty(propName);
@@ -484,13 +517,13 @@ public class StartFrame extends JFrame {
                     retval = false;
     //                System.exit(0);
                 }
-                System.out.println("retval=" + retval);
+//                System.out.println("retval=" + retval);
                 // окно сообщения по результатам соединения
                 getInformDialog(this, message, InformDialog.InformType.CONNECT);
                 return retval;
             } catch (SQLException | ClassNotFoundException ex){
                 // окно сообщения по результатам соединения
-                getInformDialog(this, message, InformDialog.InformType.CONNECT);
+                getInformDialog(this, message + "\n" + ex.getMessage(), InformDialog.InformType.CONNECT);
                 return false;
             }
         } else {return false;}
